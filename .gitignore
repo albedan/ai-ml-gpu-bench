@@ -1,0 +1,13 @@
+# virtualenv
+.venv/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# VSCode
+.vscode/
+
+# Dati compressi
+*.csv.gz

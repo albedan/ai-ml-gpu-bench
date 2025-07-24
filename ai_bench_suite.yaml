@@ -1,0 +1,30 @@
+# suite.yaml
+machine_info:
+  machine: "PC_AL_2015"   # o $(hostname) su Linux
+  cpu: "Intel i5-4690K"
+  gpu: "Nvidia GTX 1060 6GB"
+
+seed: 42
+
+xgboost:
+  script: benches/xgb_bench.py
+  rows:   [100000, 1000000, null] # null = dataset completo
+  gpu:    [true, false]
+  repeats: 3
+  out_csv: results/xgb.csv
+
+ollama:
+  script: benches/ollama_bench.py
+  prompt: "Mi spieghi la differenza tra un cammello e un dromedario?"
+  models:
+    - phi3:3.8b
+    - qwen3:4b
+    - qwen3:14b
+    - gemma3:4b
+    - gemma3:12b
+    - gemma3n:e2b
+    - deepseek-r1:8b
+    - deepseek-r1:14b
+  gpu:    [true, false]
+  repeats: 3
+  out_csv: results/ollama.csv
