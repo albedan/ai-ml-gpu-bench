@@ -1,11 +1,14 @@
 # AI & ML GPU Bench Suite for Python 
 
+## Obiettivo
+Misurare le performance della propria GPU e/o CPU su workload tipici di Machine Learning ed Intelligenza Artificiale, in maniera riproducibile e con alcuni benchmark di riferimento preimpostati.
+
 Benchmark riproducibili per:
 
 - **XGBoost** (train & inferenza su dataset HIGGS)
 - **Ollama LLMs** (latency & throughput per token)
 
-Il tutto è orchestrato da un singolo YAML e da `run_suite.py`, così puoi lanciare un’intera batteria di test con un solo comando.
+Il tutto è orchestrato da un singolo YAML (`ai_bench_suite.yaml`) e da runner (`run_suite.py`), così puoi lanciare un’intera batteria di test con un solo comando.
 
 ---
 
@@ -19,6 +22,7 @@ Assicurati di aver installato almeno le componenti must tra le seguenti
 | **uv 0.8.x**                     | Gestore pacchetti & lock-file super-veloce         | <https://docs.astral.sh/uv/getting-started/installation/>                                                         | **Must**    |
 | **CUDA ≥ 12.x**            | Benchmark GPU (XGBoost + CuPy, Ollama)             | Driver NVIDIA + <https://developer.nvidia.com/cuda-downloads>                                                     | **Optional**<br><sub>(solo se nel YAML è selezionata una GPU)</sub> |
 | **Ollama** (in esecuzione su http://localhost:11434) | Benchmark LLM via REST API                         | <https://ollama.com/download>                                                                                     | **Optional**<br><sub>(solo se si vogliono testare gli LLM)</sub> |
+| **Ollama Models**          | Modelli specificati in `ai_bench_suite.yaml`<br><sub>(commenta per escluderne alcuni, verifica installazione con `ollama list`)</sub> | <https://ollama.com/library>                                                                                     | **Optional**<br><sub>(solo se si vogliono testare gli LLM)</sub> |
 
 ---
 
