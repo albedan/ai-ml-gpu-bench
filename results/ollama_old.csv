@@ -31,19 +31,3 @@ PC_AL_2015,Intel i5-4690K,Nvidia GTX 1060 6GB,3.13.5,Windows-10-10.0.19045-SP0,o
 PC_AL_2015,Intel i5-4690K,Nvidia GTX 1060 6GB,3.13.5,Windows-10-10.0.19045-SP0,ollama,deepseek-r1:8b,False,227.26,228.08,290.00,4.57,4.77,4.79,42,2025-07-24T08:28:24
 PC_AL_2015,Intel i5-4690K,Nvidia GTX 1060 6GB,3.13.5,Windows-10-10.0.19045-SP0,ollama,deepseek-r1:14b,True,132.83,133.45,190.80,4.05,4.07,4.14,42,2025-07-24T08:36:02
 PC_AL_2015,Intel i5-4690K,Nvidia GTX 1060 6GB,3.13.5,Windows-10-10.0.19045-SP0,ollama,deepseek-r1:14b,False,167.46,176.99,177.67,3.39,3.40,3.42,42,2025-07-24T08:44:45
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,phi3:3.8b,True,3.04,3.05,4.79,210.60,210.74,210.82,42,2025-07-26T12:08:53
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,phi3:3.8b,False,27.07,27.21,51.25,21.72,22.35,22.47,42,2025-07-26T12:10:47
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,qwen3:4b,True,7.67,7.69,10.03,167.70,167.86,168.18,42,2025-07-26T12:11:16
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,qwen3:4b,False,87.69,87.93,109.43,13.49,13.53,13.70,42,2025-07-26T12:16:27
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,qwen3:14b,True,14.41,14.44,16.37,68.66,68.82,69.15,42,2025-07-26T12:17:18
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,qwen3:14b,False,204.46,211.33,214.87,4.47,4.53,4.60,42,2025-07-26T12:28:51
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,gemma3:4b,True,2.53,2.54,5.63,167.40,171.22,171.55,42,2025-07-26T12:29:02
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,gemma3:4b,False,19.86,20.36,25.59,19.69,19.71,20.18,42,2025-07-26T12:30:15
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,gemma3:12b,True,5.51,5.52,8.74,74.54,75.85,75.88,42,2025-07-26T12:30:39
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,gemma3:12b,False,56.68,56.73,67.17,7.27,7.32,7.33,42,2025-07-26T12:33:57
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,gemma3n:e2b,True,3.32,3.34,9.01,60.29,63.48,63.94,42,2025-07-26T12:34:18
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,gemma3n:e2b,False,9.90,9.95,19.39,26.84,26.90,28.21,42,2025-07-26T12:35:00
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,deepseek-r1:8b,True,7.86,7.89,13.82,102.33,109.16,109.25,42,2025-07-26T12:35:30
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,deepseek-r1:8b,False,137.44,157.61,165.19,7.22,7.67,8.79,42,2025-07-26T12:43:52
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,deepseek-r1:14b,True,9.86,9.87,12.47,67.42,67.43,67.47,42,2025-07-26T12:44:27
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,ollama,deepseek-r1:14b,False,130.34,147.44,150.00,5.57,5.67,6.02,42,2025-07-26T12:52:13

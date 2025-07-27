@@ -11,9 +11,3 @@ PC_AL_2015,Intel i5-4690K,Nvidia GTX 1060 6GB,3.13.5,Windows-10-10.0.19045-SP0,x
 PC_AL_2015,Intel i5-4690K,Nvidia GTX 1060 6GB,3.13.5,Windows-10-10.0.19045-SP0,xgboost,1000000,False,13.69,0.32,0.82227,42,2025-07-23T23:14:57
 PC_AL_2015,Intel i5-4690K,Nvidia GTX 1060 6GB,3.13.5,Windows-10-10.0.19045-SP0,xgboost,full,True,45.20,0.38,0.82495,42,2025-07-23T23:18:54
 PC_AL_2015,Intel i5-4690K,Nvidia GTX 1060 6GB,3.13.5,Windows-10-10.0.19045-SP0,xgboost,full,False,147.38,3.46,0.82489,42,2025-07-23T23:28:06
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,xgboost,100000,True,0.88,0.01,0.81023,42,2025-07-26T12:04:36
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,xgboost,100000,False,1.66,0.01,0.80963,42,2025-07-26T12:04:42
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,xgboost,1000000,True,1.15,0.01,0.82277,42,2025-07-26T12:04:51
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,xgboost,1000000,False,1.67,0.06,0.82306,42,2025-07-26T12:05:03
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,xgboost,full,True,5.42,0.03,0.82486,42,2025-07-26T12:06:10
-Mark1,AMD Ryzen 7 9800X3D,Nvidia GTX 4080 SUPER,3.13.5,Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39,xgboost,full,False,31.07,0.62,0.82495,42,2025-07-26T12:08:42
