@@ -1,8 +1,8 @@
 # suite.yaml
 machine_info:
-  machine: "PC_AL_2015"   # o $(hostname) su Linux
-  cpu: "Intel i5-4690K"
-  gpu: "Nvidia GTX 1060 6GB"
+  machine: "PC_AL_2025_6000"   # o $(hostname) su Linux
+  cpu: "AMD Ryzen 5 9600X"
+  gpu: "Nvidia RTX 5060 Ti 16GB"
 
 seed: 42
 
@@ -10,7 +10,7 @@ xgboost:
   script: benches/xgb_bench.py
   rows:   [100000, 1000000, null] # null = dataset completo
   gpu:    [true, false]
-  repeats: 3
+  repeats: 5
   out_csv: results/xgb.csv
 
 ollama:
@@ -26,5 +26,5 @@ ollama:
     - deepseek-r1:8b
     - deepseek-r1:14b
   gpu:    [true, false]
-  repeats: 3
+  repeats: 5
   out_csv: results/ollama.csv
