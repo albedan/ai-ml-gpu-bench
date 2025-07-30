@@ -173,6 +173,7 @@ def main():
         "auc": rf"{statistics.median(aucs):.5f}",
         "seed": args.seed,
         "timestamp": dt.datetime.now().isoformat(timespec="seconds"),
+        "reference": False,
     })
     emit(result, args)
 

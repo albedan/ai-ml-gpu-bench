@@ -110,6 +110,7 @@ def main():
         "tok_max_s":    f"{tok_max:.2f}",
         "seed": args.seed,
         "timestamp": dt.datetime.now().isoformat(timespec="seconds"),
+        "reference": False,
     })
     result.update(sysinfo())
     emit(result, args)

@@ -1,6 +1,6 @@
 # suite.yaml
 machine_info:
-  machine: "PC_AL_2025_6000"   # o $(hostname) su Linux
+  machine: "PC_AL_2025"   # o $(hostname) su Linux
   cpu: "AMD Ryzen 5 9600X"
   gpu: "Nvidia RTX 5060 Ti 16GB"
 

@@ -1,5 +1,10 @@
 # AI & ML GPU Bench Suite for Python 
 
+![Python](https://img.shields.io/badge/python-3.13-blue)
+![Altair](https://img.shields.io/badge/Altair-5.5-green)
+![XGBoost](https://img.shields.io/badge/XGBoost-3.0-orange)
+![Ollama](https://img.shields.io/badge/Ollama-0.9-purple)
+
 ## Obiettivo
 Misurare le performance della propria GPU e/o CPU su workload tipici di Machine Learning ed Intelligenza Artificiale, in maniera riproducibile e con alcuni benchmark di riferimento preimpostati.
 
@@ -29,6 +34,10 @@ Assicurati di aver installato almeno le componenti must tra le seguenti
 ## Setup ambiente (con uv)
 
 ```bash
+
+# 0. Solo se non hai un ambiente Python di sistema versione 3.13.*
+uv python install 3.12
+
 # 1. Crea l’ambiente virtuale
 uv venv .venv
 source .venv/bin/activate
@@ -86,7 +95,7 @@ Ogni script accetta `--json` per stampare il risultato in chiaro oltre a salvare
 ## Output
 
 - **CSV**: una riga per benchmark con tutte le metriche e metadati macchina.
-- **Notebook** (`bench_results_analysis.ipynb`): esplora i CSV e genera grafici per analizzare le performance. Sono presenti alcuni risultati di riferimento.
+- **Notebook** (`bench_results_analysis_altair.ipynb`): esplora i CSV e genera grafici per analizzare le performance. Sono presenti alcuni risultati di riferimento.
 
 ---
 
