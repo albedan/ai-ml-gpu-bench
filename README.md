@@ -36,7 +36,7 @@ Assicurati di aver installato almeno le componenti must tra le seguenti
 ```bash
 
 # 0. Solo se non hai un ambiente Python di sistema versione 3.13.*
-uv python install 3.12
+uv python install 3.13 --default
 
 # 1. Crea l’ambiente virtuale
 uv venv .venv
