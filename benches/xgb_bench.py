@@ -128,8 +128,11 @@ def main():
                 help="stampa il risultato in JSON al termine")
     ap.add_argument("--append-csv",
                 help="percorso di un CSV su cui accodare la riga di output")
+    ap.add_argument("--run-id", required=False,
+                help="identificativo unico della sessione benchmark")
     args = ap.parse_args()
 
+    run_id = args.run_id or "dev"
     X_train, X_test, y_train, y_test = load_higgs(args.sample_rows, args.seed)
 
     train_times, infer_times, aucs = [], [], []
@@ -162,7 +165,7 @@ def main():
     print(f"Seed usato : {args.seed}")
     print("=============================")
 
-    result = {}
+    result = {"run_id": run_id}
     result.update(sysinfo())
     result.update({           # costruisci il dict con tutte le metriche
         "bench":"xgboost",

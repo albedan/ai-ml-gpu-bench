@@ -6,9 +6,12 @@
 ![Ollama](https://img.shields.io/badge/Ollama-0.9-purple)
 
 ## Obiettivo
-Misurare le performance della propria GPU e/o CPU su workload tipici di Machine Learning ed Intelligenza Artificiale, in maniera riproducibile e con alcuni benchmark di riferimento preimpostati.
 
-Benchmark riproducibili per:
+> **Un solo comando → un benchmark completo per GPU/CPU & un report HTML interattivo**
+
+Ora puoi misurare le **performance** della tua GPU e/o CPU consumer su **workload tipici** di Machine Learning ed Intelligenza Artificiale, in maniera controllata e con alcuni **risultati di riferimento preimpostati**.
+
+I benchmark riproducibili riguardano:
 
 - **XGBoost** (train & inferenza su dataset HIGGS)
 - **Ollama LLMs** (latency & throughput per token)
@@ -17,7 +20,30 @@ Il tutto è orchestrato da un singolo YAML (`ai_bench_suite.yaml`) e da runner (
 
 ---
 
-## Requisiti
+### Cosa succede durante una run
+
+1. Viene generato un **`run_id`** unico.  
+2. Vengono eseguiti i benchmark previsti dal file **YAML di configurazione**. 
+3. I risultati di ogni test sono registrati in due CSV separati per **XGBoost** e **Ollama** (se selezionati entrambi).  
+4. Se si vuole contribuire a far crescere la base dei risultati *reference*, i due CSV vengono **cifrati** (RSA 4096) e caricati su Filebin (link mostrato in console), fornendo solo dati tecnici.  
+5. Il notebook Altair viene eseguito ed esportato in HTML **senza il codice**; si apre da solo nel browser (le barre con **bordo spesso** sono quelle della run appena terminata).
+
+---
+
+## Cosa ti aspetta: due esempi
+
+4 GPU confrontate su 8 diversi LLM tramite Ollama.
+![Dashboard Altair Ollama](images/visualization_ollama.png)
+
+
+XGBoost testato su 4 macchine, ciascuna con GPU abilitata o meno.
+![Dashboard Altair XGBoost](images/visualization_xgboost.png)
+
+---
+
+## Get started!
+
+### Requisiti
 
 Assicurati di aver installato almeno le componenti must tra le seguenti
 
@@ -31,7 +57,7 @@ Assicurati di aver installato almeno le componenti must tra le seguenti
 
 ---
 
-## Setup ambiente (con uv)
+### Setup ambiente (con uv)
 
 ```bash
 
@@ -48,7 +74,7 @@ uv sync
 
 ---
 
-## Configurazione: `ai_bench_suite.yaml`
+### Configurazione: `ai_bench_suite.yaml`
 
 Tutti i parametri di benchmark vivono qui:
 
@@ -64,58 +90,35 @@ machine_info:
 - Per gli LLM che hai lasciato non commentati, verifica di averli disponibili con ``ollama list`` da terminale. Puoi installarli con ``ollama pull [nome_llm]``.
 - Ogni combinazione elencata in `rows` × `gpu` (per XGBoost) e `models` × `gpu` (per Ollama) viene provata automaticamente.
 
-> Il seed globale è impostato a `42`, modificabile via YAML.
-
 ---
 
-## Esecuzione
+### Esecuzione
 
-### Tutta la suite
+Un solo comando che legge il file YAML di configurazione e orchestra l'esecuzione dei test, la registrazione e la visualizzazione dei risultati.
+
+Semplicemente questo:
 
 ```bash
 uv run run_suite.py
 ```
 
-Lo script legge lo YAML, lancia gli script indicati e appende i risultati nei CSV dichiarati.
+### Privacy & Opzioni
 
-### Singoli benchmark
-
-```bash
-# XGBoost, CPU, 1 milione di righe, 5 ripetizioni
-uv run benches/xgb_bench.py --sample-rows 1000000 -n 5 --append-csv results/xgb.csv
-
-# Ollama, modello gemma3:12b, GPU, prompt da file
-uv run benches/ollama_bench.py -m gemma3:12b --gpu -p Spiegami la relatività --append-csv results/ollama.csv
-```
-
-Ogni script accetta `--json` per stampare il risultato in chiaro oltre a salvare su CSV.
+| 📦 | Dettaglio |
+|----|-----------|
+| **Condivisione risultati** | Crittografati con schema a chiave pubblica/privata e caricati su Filebin (solo dati tecnici) |
+| **Opt-out risultati** | `--no-upload-results` permette di saltare in toto cifratura e upload dei risultati |
+| **Selezione suite** | `--suite` permette di selezionare `xgboost`, `ollama` o `both` (default)|
 
 ---
 
-## Output
+### Output
 
-- **CSV**: una riga per benchmark con tutte le metriche e metadati macchina.
-- **Notebook** (`bench_results_analysis_altair.ipynb`): esplora i CSV e genera grafici per analizzare le performance. Sono presenti alcuni risultati di riferimento.
+- **CSV**: vengono scritti i file di risultati `xgb.csv` e `ollama.csv`, con una riga per benchmark, con metriche e metadati di base della macchina.
+- **Notebook** (`bench_results_analysis_altair.ipynb`): viene eseguito e aperto nel browser in automatico. Permette di esplorare i risultati appena ottenuti e confrontarli con benchmark di riferimento.
 
----
+## 🔚 Grazie per il test!
+Se trovi un problema o hai un’idea, **apri una Issue** - o, meglio, una **Pull Request**!  
+Nel possibile, lascia abilitata la condivisione dei risultati per far crescere le *reference*! 🚀
 
-## FAQ
-
-### 𝐐  "Ollama non parte su GPU"
-
-- Assicurati di avere CUDA 12 e un driver >= 535.
-- Alcuni modelli non hanno build quantizzate GPU: lascia commented nelle `models` o lancia solo `--cpu`.
-
-### 𝐐  "ImportError: cannot import cupy"
-
-- Installa la build corretta per la tua versione CUDA: `uv pip install cupy-cuda12x`.
-
-### 𝐐  "Out Of Memory su XGBoost GPU"
-
-- Riduci `rows` nello YAML.
-
----
-
-## Contribuire
-
-TBD!
+_Buon benchmark e buone sperimentazioni!_
