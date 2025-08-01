@@ -33,9 +33,11 @@ Everything is orchestrated by a single YAML file (`ai_bench_suite.yaml`) and a r
 ## What to expect: two examples
 
 4 GPUs compared on 8 different LLMs via Ollama.  
+
 ![Altair Dashboard Ollama](images/visualization_ollama.png)
 
 XGBoost tested on 4 machines, each with the GPU enabled or not.  
+
 ![Altair Dashboard XGBoost](images/visualization_xgboost.png)
 
 ---

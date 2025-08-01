@@ -19,7 +19,7 @@ def run_cmd(cmd):
     print("→", " ".join(cmd))
     res = subprocess.run(cmd)
     if res.returncode:
-        sys.exit(f"❌ comando fallito: {cmd}")
+        sys.exit(f"❌ command failed: {cmd}")
 
 def run_xgboost(run_id):
     for rows, gpu in itertools.product(CFG["xgboost"]["rows"], CFG["xgboost"]["gpu"]):
@@ -50,29 +50,29 @@ def run_ollama(run_id):
 def handle_upload(args):
     """Cifra i CSV e li carica su Filebin (se non disabilitato)."""
     if args.no_upload_results or not CFG["upload"]["enabled_default"]:
-        print("🔒  Upload disabilitato")
+        print("🔒  Upload disabled")
         return
 
     pub = encrypt_upload.load_pub(CFG["upload"]["public_key"])
     bin_id = CFG["upload"]["filebin_bin"]
 
-    print("\n📦  Preparazione upload")
-    print(f"   • Destinazione  : https://filebin.net/{bin_id}/")
-    print(f"   • File coinvolti: {', '.join(Path(p).name for p in CFG['upload']['targets'])}")
+    print("\n📦  Preparing upload")
+    print(f"   • Destination  : https://filebin.net/{bin_id}/")
+    print(f"   • Files to be uploaded: {', '.join(Path(p).name for p in CFG['upload']['targets'])}")
 
     for csv in CFG["upload"]["targets"]:
         path = pathlib.Path(csv)
         if not path.exists():
-            print(f"⚠️  {csv} non trovato, salto")
+            print(f"⚠️  {csv} not found, next")
             continue
 
         enc_path = encrypt_upload.encrypt(pub, path)
         url = encrypt_upload.upload_to_filebin(enc_path, bin_id)
-        print(f"📤  {enc_path.name} caricato → {url}")
+        print(f"📤  {enc_path.name} uploaded → {url}")
         try:
             enc_path.unlink()
         except OSError as e:
-            print(f"⚠️  Impossibile cancellare {enc_path.name}: {e}")
+            print(f"⚠️  Impossible to delete {enc_path.name}: {e}")
 
 def gen_run_id():
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -94,13 +94,13 @@ def inject_header_cell(notebook_path: str, run_id: str,
     }[suite_chosen]
 
     md = (
-        f"## ✅ Benchmark completato\n\n"
+        f"## ✅ Benchmark completed\n\n"
         f"* **run_id**: `{run_id}`\n"
-        f"* **Durata totale**: {human}\n"
-        f"* **Test eseguiti**: {tests}\n"
-        f"* **Barre con bordo spesso** ⇒ risultati di *questa* run\n"
-        f"* **Barre con bordo sottile** ⇒ reference ufficiali\n\n"
-        "Grazie per aver eseguito la suite! 🚀"
+        f"* **Total duration**: {human}\n"
+        f"* **Executed tests**: {tests}\n"
+        f"* **Bars with thick border** ⇒ results of *this* run\n"
+        f"* **Bars with thin border** ⇒ official references\n\n"
+        "Thank you for running the suite! 🚀"
     )
 
     header = nbformat.v4.new_markdown_cell(md)
@@ -141,7 +141,7 @@ def main():
         help="Which benchmark suite to run (default: both)",
     )
     parser.add_argument("--no-upload-results", action="store_true",
-                        help="Non cifrare / non inviare risultati")
+                        help="Do not encrypt / do not send results")
 
     args = parser.parse_args()
 

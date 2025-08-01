@@ -123,4 +123,4 @@ if __name__ == "__main__":
     try:
         main()
     except requests.exceptions.ConnectionError:
-        sys.exit("❌ Ollama non sembra in esecuzione su http://localhost:11434")
+        sys.exit("❌ Ollama apparently not running on http://localhost:11434")

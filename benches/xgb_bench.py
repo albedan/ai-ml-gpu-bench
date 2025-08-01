@@ -31,17 +31,17 @@ DEFAULT_SEED = 42
 def download_dataset() -> pathlib.Path:
     DATA_DIR.mkdir(exist_ok=True)
     if not CSV_GZ.exists():
-        print(f"⬇️  Scarico HIGGS… ({HIGGS_URL})")
+        print(f"⬇️  Downloading HIGGS… ({HIGGS_URL})")
         urllib.request.urlretrieve(HIGGS_URL, CSV_GZ)
     else:
-        print("✅ Dataset già presente.")
+        print("✅ Dataset already present.")
     return CSV_GZ
 
 
 def load_higgs(rows: int | None, seed: int) -> Tuple[np.ndarray, ...]:
     """Legge il CSV in RAM con pandas; restituisce NumPy array + split stabile."""
     csv_path = download_dataset()
-    print(f"📥 Carico {'tutte le' if rows is None else f'{rows:_}'} righe…")
+    print(f"📥 Loading {'all' if rows is None else f'{rows:_}'} rows…")
     df = pd.read_csv(
         csv_path,
         compression="gzip",
