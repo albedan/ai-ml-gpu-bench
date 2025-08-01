@@ -5,120 +5,119 @@
 ![XGBoost](https://img.shields.io/badge/XGBoost-3.0-orange)
 ![Ollama](https://img.shields.io/badge/Ollama-0.9-purple)
 
-## Obiettivo
+## Objective
 
-> **Un solo comando → un benchmark completo per GPU/CPU & un report HTML interattivo**
+> **One command → a full GPU/CPU benchmark & an interactive HTML report**
 
-Ora puoi misurare le **performance** della tua GPU e/o CPU consumer su **workload tipici** di Machine Learning ed Intelligenza Artificiale, in maniera controllata e con alcuni **risultati di riferimento preimpostati**.
+You can now measure your consumer **GPU** and/or **CPU** performance on **typical Artificial Intelligence and Machine Learning workloads** in a controlled way, with some **pre‑set reference results**.
 
-I benchmark riproducibili riguardano:
+The reproducible benchmarks cover:
 
-- **XGBoost** (train & inferenza su dataset HIGGS)
-- **Ollama LLMs** (latency & throughput per token)
+- **Ollama LLMs** (token latency & throughput on various 3B → 14B parameter models)
+- **XGBoost** (training & inference on the HIGGS dataset, on 100k → 10M+ rows)
 
-Il tutto è orchestrato da un singolo YAML (`ai_bench_suite.yaml`) e da runner (`run_suite.py`), così puoi lanciare un’intera batteria di test con un solo comando.
-
----
-
-### Cosa succede durante una run
-
-1. Viene generato un **`run_id`** unico.  
-2. Vengono eseguiti i benchmark previsti dal file **YAML di configurazione**. 
-3. I risultati di ogni test sono registrati in due CSV separati per **XGBoost** e **Ollama** (se selezionati entrambi).  
-4. Se si vuole contribuire a far crescere la base dei risultati *reference*, i due CSV vengono **cifrati** (RSA 4096) e caricati su Filebin (link mostrato in console), fornendo solo dati tecnici.  
-5. Il notebook Altair viene eseguito ed esportato in HTML **senza il codice**; si apre da solo nel browser (le barre con **bordo spesso** sono quelle della run appena terminata).
+Everything is orchestrated by a single YAML file (`ai_bench_suite.yaml`) and a runner script (`run_suite.py`), so you can launch an entire set of tests with one command.
 
 ---
 
-## Cosa ti aspetta: due esempi
+### What happens during a run
 
-4 GPU confrontate su 8 diversi LLM tramite Ollama.
-![Dashboard Altair Ollama](images/visualization_ollama.png)
+1. A unique **`run_id`** is generated.  
+2. The benchmarks specified in the **configuration YAML file** are executed.  
+3. The results of each test are recorded in two separate CSVs for **XGBoost** and **Ollama** (if both are selected).  
+4. If you’d like to help grow the *reference* result base, the two CSVs are **encrypted** (RSA 4096) and uploaded to Filebin (link shown in the console), submitting only technical data.  
+5. The Altair notebook is executed and exported to HTML **without the code**; it opens automatically in the browser (the bars with a **thick border** are those from the just‑completed run).
 
+---
 
-XGBoost testato su 4 macchine, ciascuna con GPU abilitata o meno.
-![Dashboard Altair XGBoost](images/visualization_xgboost.png)
+## What to expect: two examples
+
+4 GPUs compared on 8 different LLMs via Ollama.  
+![Altair Dashboard Ollama](images/visualization_ollama.png)
+
+XGBoost tested on 4 machines, each with the GPU enabled or not.  
+![Altair Dashboard XGBoost](images/visualization_xgboost.png)
 
 ---
 
 ## Get started!
 
-### Requisiti
+### Requirements
 
-Assicurati di aver installato almeno le componenti must tra le seguenti
+Make sure you have installed at least the **must‑have** components below
 
-| Requisito                  | Perché serve                                       | Come installare                                                                                                   | Necessario? |
-|----------------------------|----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|-------------|
-| **Python ≥ 3.13**          | Runtime per gli script                             | <https://www.python.org/>                                                                                         | **Must**    |
-| **uv 0.8.x**                     | Gestore pacchetti & lock-file super-veloce         | <https://docs.astral.sh/uv/getting-started/installation/>                                                         | **Must**    |
-| **CUDA ≥ 12.x**            | Benchmark GPU (XGBoost + CuPy, Ollama)             | Driver NVIDIA + <https://developer.nvidia.com/cuda-downloads>                                                     | **Optional**<br><sub>(solo se nel YAML è selezionata una GPU)</sub> |
-| **Ollama** (in esecuzione su http://localhost:11434) | Benchmark LLM via REST API                         | <https://ollama.com/download>                                                                                     | **Optional**<br><sub>(solo se si vogliono testare gli LLM)</sub> |
-| **Ollama Models**          | Modelli specificati in `ai_bench_suite.yaml`<br><sub>(commenta per escluderne alcuni, verifica installazione con `ollama list`)</sub> | <https://ollama.com/library>                                                                                     | **Optional**<br><sub>(solo se si vogliono testare gli LLM)</sub> |
+| Requirement                  | Why it’s needed                                   | How to install                                                                                                   | Required? |
+|------------------------------|----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|-----------|
+| **Python ≥ 3.13**           | Runtime for the scripts                            | <https://www.python.org/>                                                                                         | **Must**  |
+| **uv 0.8.x**                | Super‑fast package manager & lock‑file generator   | <https://docs.astral.sh/uv/getting-started/installation/>                                                         | **Must**  |
+| **CUDA ≥ 12.x**             | GPU benchmark (XGBoost + CuPy, Ollama)             | NVIDIA Driver + <https://developer.nvidia.com/cuda-downloads>                                                     | **Optional**<br><sub>(only if a GPU is selected in the YAML)</sub> |
+| **Ollama** (running at http://localhost:11434) | LLM benchmark via REST API                      | <https://ollama.com/download>                                                                                     | **Optional**<br><sub>(only if you want to test LLMs)</sub> |
+| **Ollama Models**           | Models specified in `ai_bench_suite.yaml`<br><sub>(comment models to exclude them, verify installation with `ollama list`)</sub> | <https://ollama.com/library>                                                                                      | **Optional**<br><sub>(only if you want to test LLMs)</sub> |
 
 ---
 
-### Setup ambiente (con uv)
+### Environment setup (with uv)
 
 ```bash
-
-# 0. Solo se non hai un ambiente Python di sistema versione 3.13.*
+# 0. Only if you don’t have a system Python 3.13.*
 uv python install 3.13 --default
 
-# 1. Crea l’ambiente virtuale
+# 1. Create the virtual environment
 uv venv .venv
 source .venv/bin/activate
 
-# 2. Installa le dipendenze
+# 2. Install dependencies
 uv sync
 ```
 
 ---
 
-### Configurazione: `ai_bench_suite.yaml`
+### Configuration: `ai_bench_suite.yaml`
 
-Tutti i parametri di benchmark vivono qui:
+All benchmark parameters are here:
 
 ```yaml
 machine_info:
-  machine: "PC_AL_2025"     # Scegli il tuo nome host sintetico
-  cpu:    "AMD Ryzen 5 9600X" # Nome commerciale CPU
-  gpu:    "Nvidia RTX 5060 16GB" # Nome GPU
+  machine: "PC_AL_2025"       # Choose your synthetic host name
+  cpu:    "AMD Ryzen 5 9600X" # Commercial CPU name
+  gpu:    "Nvidia RTX 5060 16GB" # GPU name
 ```
 
-- **Aggiorna** questi tre campi in base alla tua macchina.
-- **Commenta / decommenta** le voci nella sezione ``ollama`` per includere o escludere LLM che non hai scaricato.
-- Per gli LLM che hai lasciato non commentati, verifica di averli disponibili con ``ollama list`` da terminale. Puoi installarli con ``ollama pull [nome_llm]``.
-- Ogni combinazione elencata in `rows` × `gpu` (per XGBoost) e `models` × `gpu` (per Ollama) viene provata automaticamente.
+- **Update** these three fields to match your machine.  
+- **Comment / uncomment** the entries in the ``ollama`` section to include or exclude LLMs you haven’t downloaded.  
+- For the LLMs you left uncommented, verify they’re available with ``ollama list``. You can install them with ``ollama pull [model_name]``.  
+- Every combination listed in `rows` × `gpu` (for XGBoost) and `models` × `gpu` (for Ollama) is tried automatically.
 
 ---
 
-### Esecuzione
+### Execution
 
-Un solo comando che legge il file YAML di configurazione e orchestra l'esecuzione dei test, la registrazione e la visualizzazione dei risultati.
+A single command reads the configuration YAML file and orchestrates the test execution, logging and result visualization.
 
-Semplicemente questo:
+Simply run:
 
 ```bash
 uv run run_suite.py
 ```
 
-### Privacy & Opzioni
+### Privacy & Options
 
-| 📦 | Dettaglio |
-|----|-----------|
-| **Condivisione risultati** | Crittografati con schema a chiave pubblica/privata e caricati su Filebin (solo dati tecnici) |
-| **Opt-out risultati** | `--no-upload-results` permette di saltare in toto cifratura e upload dei risultati |
-| **Selezione suite** | `--suite` permette di selezionare `xgboost`, `ollama` o `both` (default)|
+| 📦 | Detail |
+|----|--------|
+| **Result sharing** | Encrypted with a public/private key scheme and uploaded to Filebin (technical data only) |
+| **Opt‑out results** | `--no-upload-results` skips encryption and upload entirely |
+| **Suite selection** | `--suite` lets you choose `xgboost`, `ollama` or `both` (default) |
 
 ---
 
 ### Output
 
-- **CSV**: vengono scritti i file di risultati `xgb.csv` e `ollama.csv`, con una riga per benchmark, con metriche e metadati di base della macchina.
-- **Notebook** (`bench_results_analysis_altair.ipynb`): viene eseguito e aperto nel browser in automatico. Permette di esplorare i risultati appena ottenuti e confrontarli con benchmark di riferimento.
+- **CSV**: result files `xgb.csv` and `ollama.csv` are written, one row per benchmark, with metrics and basic machine metadata.  
+- **Notebook** (`bench_results_analysis_altair.ipynb`): executed and opened automatically in the browser. It lets you explore the newly obtained results and compare them with reference benchmarks.
 
-## 🔚 Grazie per il test!
-Se trovi un problema o hai un’idea, **apri una Issue** - o, meglio, una **Pull Request**!  
-Nel possibile, lascia abilitata la condivisione dei risultati per far crescere le *reference*! 🚀
+## 🔚 Thanks for testing!
 
-_Buon benchmark e buone sperimentazioni!_
+If you find an issue or have an idea, **open an Issue** – or, even better, a **Pull Request**!  
+Whenever possible, please keep result sharing enabled to help grow the *references*! 🚀
+
+_Happy benchmarking and experimenting!_
