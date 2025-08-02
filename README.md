@@ -56,6 +56,17 @@ Make sure you have installed at least the **must‑have** components below
 | **Ollama** (running at http://localhost:11434) | LLM benchmark via REST API                      | <https://ollama.com/download>                                                                                     | **Optional**<br><sub>(only if you want to test LLMs)</sub> |
 | **Ollama Models**           | Models specified in `ai_bench_suite.yaml`<br><sub>(comment models to exclude them, verify installation with `ollama list`)</sub> | <https://ollama.com/library>                                                                                      | **Optional**<br><sub>(only if you want to test LLMs)</sub> |
 
+
+---
+
+### Clone the repository
+
+In a local folder, just:
+
+```bash
+git clone https://github.com/albedan/ai-ml-gpu-bench
+```
+
 ---
 
 ### Environment setup (with uv)
