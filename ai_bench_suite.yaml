@@ -1,4 +1,5 @@
-# suite.yaml
+# ai_bench_suite.yaml
+
 machine_info:
   machine: "PC_AL_2025"
   cpu: "AMD Ryzen 5 9600X"
@@ -8,8 +9,8 @@ seed: 42
 
 xgboost:
   script: benches/xgb_bench.py
-  rows:   [100000, 1000000, null] # null = dataset completo
-  gpu:    [true, false]
+  rows:   [100000, 1000000, null] # null = full dataset
+  gpu:    [true, false] # Leave [true, false] to test both cpu and gpu; false = just CPU; true = just GPU
   repeats: 3
   out_csv: results/xgb.csv
 
@@ -25,12 +26,12 @@ ollama:
     - gemma3n:e2b
     - deepseek-r1:8b
     - deepseek-r1:14b
-  gpu:    [true, false]
+  gpu:    [true, false] # Leave true, false to test both cpu and gpu; false = just CPU; true = just GPU
   repeats: 3
   out_csv: results/ollama.csv
 
 upload:
-  enabled_default: true          # default = upload; CLI potrà disattivare
+  enabled_default: true
   public_key:  public.pem
   filebin_bin:  7jcvzdchlkcbo4pc
   targets:
