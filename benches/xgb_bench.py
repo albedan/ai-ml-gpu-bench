@@ -170,7 +170,7 @@ def main():
     result.update({           # costruisci il dict con tutte le metriche
         "bench":"xgboost",
         "dataset_rows": args.sample_rows if args.sample_rows else "full",
-        "gpu": args.gpu,
+        "gpu_used": args.gpu,
         "train_median_s": f"{t_median:.2f}",
         "infer_median_s": f"{i_median:.2f}",
         "auc": rf"{statistics.median(aucs):.5f}",

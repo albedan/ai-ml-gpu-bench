@@ -1,4 +1,4 @@
-run_id,machine,CPU,GPU,python,platform,bench,dataset_rows,gpu,train_median_s,infer_median_s,auc,seed,timestamp,reference
+run_id,machine,CPU,GPU,python,platform,bench,dataset_rows,gpu_used,train_median_s,infer_median_s,auc,seed,timestamp,reference
 REF_1,PC_AL_2025,AMD Ryzen 5 9600X,Nvidia RTX 5060 Ti 16GB,3.13.5,Windows-11-10.0.26100-SP0,xgboost,100000,True,0.80,0.01,0.81023,42,2025-07-23T21:02:39,True
 REF_1,PC_AL_2025,AMD Ryzen 5 9600X,Nvidia RTX 5060 Ti 16GB,3.13.5,Windows-11-10.0.26100-SP0,xgboost,100000,False,0.59,0.01,0.81072,42,2025-07-23T21:02:43,True
 REF_1,PC_AL_2025,AMD Ryzen 5 9600X,Nvidia RTX 5060 Ti 16GB,3.13.5,Windows-11-10.0.26100-SP0,xgboost,1000000,True,1.60,0.01,0.82277,42,2025-07-23T21:02:54,True

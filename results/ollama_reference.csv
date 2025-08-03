@@ -1,4 +1,4 @@
-run_id,machine,CPU,GPU,python,platform,bench,model,gpu,wall_min_s,wall_med_s,wall_max_s,tok_min_s,tok_med_s,tok_max_s,seed,timestamp,reference
+run_id,machine,CPU,GPU,python,platform,bench,model,gpu_used,wall_min_s,wall_med_s,wall_max_s,tok_min_s,tok_med_s,tok_max_s,seed,timestamp,reference
 REF_1,PC_AL_2025,AMD Ryzen 5 9600X,Nvidia RTX 5060 Ti 16GB,3.13.5,Windows-11-10.0.26100-SP0,ollama,phi3:3.8b,True,6.37,6.45,14.81,133.99,136.25,136.62,42,2025-07-23T21:08:10,True
 REF_1,PC_AL_2025,AMD Ryzen 5 9600X,Nvidia RTX 5060 Ti 16GB,3.13.5,Windows-11-10.0.26100-SP0,ollama,phi3:3.8b,False,31.59,34.68,34.70,21.43,21.44,21.55,42,2025-07-23T21:09:52,True
 REF_1,PC_AL_2025,AMD Ryzen 5 9600X,Nvidia RTX 5060 Ti 16GB,3.13.5,Windows-11-10.0.26100-SP0,ollama,qwen3:4b,True,13.93,14.19,19.01,105.24,106.41,107.55,42,2025-07-23T21:10:39,True

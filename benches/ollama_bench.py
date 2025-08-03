@@ -105,7 +105,7 @@ def main():
     result.update({           # costruisci il dict con tutte le metriche
         "bench":"ollama",
         "model": args.model,
-        "gpu": args.gpu,
+        "gpu_used": args.gpu,
         "wall_min_s":   f"{wall_min:.2f}",
         "wall_med_s":   f"{wall_med:.2f}",
         "wall_max_s":   f"{wall_max:.2f}",
