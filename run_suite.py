@@ -22,7 +22,7 @@ def run_cmd(cmd):
         sys.exit(f"❌ command failed: {cmd}")
 
 def run_xgboost(run_id):
-    for rows, gpu in itertools.product(CFG["xgboost"]["rows"], CFG["xgboost"]["gpu"]):
+    for rows, gpu in itertools.product(CFG["xgboost"]["rows"], CFG["xgboost"]["gpu_used"]):
         cmd = [PY, CFG["xgboost"]["script"],
                "--repeats", str(CFG["xgboost"]["repeats"]),
                "--seed", str(CFG["seed"]),
@@ -34,7 +34,7 @@ def run_xgboost(run_id):
         run_cmd(cmd)
 
 def run_ollama(run_id):
-    for model, gpu in itertools.product(CFG["ollama"]["models"], CFG["ollama"]["gpu"]):
+    for model, gpu in itertools.product(CFG["ollama"]["models"], CFG["ollama"]["gpu_used"]):
         cmd = [PY, CFG["ollama"]["script"],
                "--model", model,
                "--prompt", CFG["ollama"]["prompt"],

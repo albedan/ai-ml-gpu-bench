@@ -10,7 +10,7 @@ seed: 42
 xgboost:
   script: benches/xgb_bench.py
   rows:   [100000, 1000000, null] # null = full dataset
-  gpu:    [true, false] # Leave [true, false] to test both cpu and gpu; false = just CPU; true = just GPU
+  gpu_used:    [true, false] # Leave [true, false] to test both cpu and gpu; false = just CPU; true = just GPU
   repeats: 3
   out_csv: results/xgb.csv
 
@@ -26,7 +26,7 @@ ollama:
     - gemma3n:e2b
     - deepseek-r1:8b
     - deepseek-r1:14b
-  gpu:    [true, false] # Leave true, false to test both cpu and gpu; false = just CPU; true = just GPU
+  gpu_used:    [true, false] # Leave true, false to test both cpu and gpu; false = just CPU; true = just GPU
   repeats: 3
   out_csv: results/ollama.csv
 
