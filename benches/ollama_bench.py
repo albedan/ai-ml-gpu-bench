@@ -9,9 +9,10 @@ from __future__ import annotations
 
 from bench_utils import emit, sysinfo
 
-import argparse, time, statistics, json, os, sys
+import argparse, time, statistics, sys
 from pathlib import Path
 import requests
+import subprocess
 from tabulate import tabulate
 import datetime as dt
 
@@ -45,6 +46,33 @@ def call_ollama(model: str, prompt: str, use_gpu: bool, seed: int):
     tokens  = data.get("eval_count", 0)
     txt     = data.get("response", "")
     return wall, tot_ns, eval_ns, tokens, len(txt)
+
+def get_ollama_version(host: str = "http://localhost:11434") -> str:
+    """
+    Prova a leggere la versione del server Ollama via API; se fallisce,
+    ripiega su `ollama --version`. Ritorna 'unknown' se non disponibile.
+    """
+    try:
+        r = requests.get(f"{host}/api/version", timeout=5)
+        if r.ok:
+            j = r.json()
+            v = j.get("version") or j.get("data") or j.get("ollama")  # compat
+            if isinstance(v, str) and v.strip():
+                return v.strip()
+    except Exception:
+        pass
+
+    try:
+        cp = subprocess.run(
+            ["ollama", "--version"],
+            capture_output=True, text=True, timeout=5
+        )
+        if cp.returncode == 0:
+            return cp.stdout.strip() or cp.stderr.strip() or "unknown"
+    except Exception:
+        pass
+
+    return "unknown"
 
 def ns2s(ns: int) -> float:
     return ns / 1e9
@@ -104,6 +132,7 @@ def main():
     result.update(sysinfo())
     result.update({           # costruisci il dict con tutte le metriche
         "bench":"ollama",
+        "version": get_ollama_version(),
         "model": args.model,
         "gpu_used": args.gpu,
         "wall_min_s":   f"{wall_min:.2f}",

@@ -169,6 +169,7 @@ def main():
     result.update(sysinfo())
     result.update({           # costruisci il dict con tutte le metriche
         "bench":"xgboost",
+        "version":xgb.__version__,
         "dataset_rows": args.sample_rows if args.sample_rows else "full",
         "gpu_used": args.gpu,
         "train_median_s": f"{t_median:.2f}",
