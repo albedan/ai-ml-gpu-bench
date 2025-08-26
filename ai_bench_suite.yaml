@@ -33,7 +33,7 @@ ollama:
 upload:
   enabled_default: true
   public_key:  public.pem
-  filebin_bin:  7jcvzdchlkcbo4pc
+  filebin_bin:  7fxw12916m0byih8
   targets:
     - results/xgb.csv
     - results/ollama.csv
