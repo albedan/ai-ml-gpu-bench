@@ -18,6 +18,10 @@ The reproducible benchmarks cover:
 
 Everything is orchestrated by a single YAML file (`ai_bench_suite.yaml`) and a runner script (`run_suite.py`), so you can launch an entire set of tests with one command.
 
+Results are visible at the end of the benchmark in a **notebook** that is automatically produced, with comparison against a handful of *reference systems*.
+
+To better navigate a growing number of results, you can head to this **Streamlit dashboard** that is regularly updated: <https://ai-ml-gpu-bench.streamlit.app>
+
 ---
 
 ### What happens during a run
@@ -77,7 +81,6 @@ uv python install 3.13 --default
 
 # 1. Create the virtual environment
 uv venv .venv
-source .venv/bin/activate
 
 # 2. Install dependencies
 uv sync
