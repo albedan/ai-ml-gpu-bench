@@ -149,6 +149,16 @@ def render_notebook():
 def main():
     pathlib.Path("results").mkdir(exist_ok=True)
 
+    for fname in ("xgb.csv", "ollama.csv"):
+        fpath = Path("results") / fname
+        try:
+            fpath.unlink()
+            print(f"🧹  Removed previous results file: {fpath}")
+        except FileNotFoundError:
+            pass
+        except OSError as e:
+            print(f"⚠️  Could not remove {fpath}: {e}")
+
     parser = argparse.ArgumentParser(
         description="Run benchmark suite: XGBoost, Ollama, or both"
     )
