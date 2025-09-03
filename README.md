@@ -63,27 +63,18 @@ Make sure you have installed at least the **must‑have** components below
 
 ---
 
-### Clone the repository
+### Environment setup
 
-In a local folder, just:
+In a local folder, just **clone this repository**:
 
 ```bash
 git clone https://github.com/albedan/ai-ml-gpu-bench
 ```
 
----
-
-### Environment setup (with uv)
+Only if you don’t have a system Python 3.13.*, you can install it via **uv**:
 
 ```bash
-# 0. Only if you don’t have a system Python 3.13.*
 uv python install 3.13 --default
-
-# 1. Create the virtual environment
-uv venv .venv
-
-# 2. Install dependencies
-uv sync
 ```
 
 ---
@@ -115,6 +106,8 @@ Simply run:
 ```bash
 uv run run_suite.py
 ```
+
+The first run will download the needed dependencies.
 
 ### Privacy & Options
 
