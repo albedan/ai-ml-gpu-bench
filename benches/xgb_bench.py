@@ -133,14 +133,25 @@ def main():
     args = ap.parse_args()
 
     run_id = args.run_id or "dev"
-    X_train, X_test, y_train, y_test = load_higgs(args.sample_rows, args.seed)
-
+    try:
+        X_train, X_test, y_train, y_test = load_higgs(args.sample_rows, args.seed)
+    except MemoryError as e:
+        print(f"⚠️  HIGGS load failed (out of memory): {e}. Skipping this configuration.")
+        return 0
+    except Exception as e:
+        print(f"⚠️  HIGGS load failed: {e}. Skipping this configuration.")
+        return 0
+    
     train_times, infer_times, aucs = [], [], []
     for i in range(1, args.repeats + 1):
         print(f"\n🏃 Run {i}/{args.repeats} …")
-        t_train, t_inf, auc = run_training(
-            X_train, y_train, X_test, y_test, args.gpu, args.seed
-        )
+        try:
+            t_train, t_inf, auc = run_training(
+                X_train, y_train, X_test, y_test, args.gpu, args.seed
+            )
+        except Exception as e:
+            print(f"⚠️  XGBoost run failed (GPU={args.gpu}): {e}. Skipping this run.")
+            continue
         train_times.append(t_train)
         infer_times.append(t_inf)
         aucs.append(auc)
@@ -155,6 +166,10 @@ def main():
             statistics.stdev(arr) if len(arr) > 1 else 0.0,
         )
 
+    if not train_times:
+        print("⚠️  No successful XGBoost runs; not writing CSV for this configuration.")
+        return 0
+    
     t_median, t_min, t_max, t_std = stats(train_times)
     i_median, i_min, i_max, i_std = stats(infer_times)
 

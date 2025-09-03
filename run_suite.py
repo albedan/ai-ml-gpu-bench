@@ -19,9 +19,12 @@ def run_cmd(cmd):
     print("→", " ".join(cmd))
     res = subprocess.run(cmd)
     if res.returncode:
-        sys.exit(f"❌ command failed: {cmd}")
+        print(f"⚠️  command failed (exit {res.returncode}): {' '.join(cmd)}")
+        return False
+    return True
 
 def run_xgboost(run_id):
+    any_ok = False
     for rows, gpu in itertools.product(CFG["xgboost"]["rows"], CFG["xgboost"]["gpu_used"]):
         cmd = [PY, CFG["xgboost"]["script"],
                "--repeats", str(CFG["xgboost"]["repeats"]),
@@ -31,10 +34,19 @@ def run_xgboost(run_id):
         if rows:  cmd += ["--sample-rows", str(rows)]
         if gpu:   cmd += ["--gpu"]
         cmd += ["--json"]    # facoltativo, per debug
-        run_cmd(cmd)
+        ok = run_cmd(cmd)
+        any_ok = any_ok or ok
+    if not any_ok:
+        print("⚠️  All XGBoost commands failed (see messages above).")
 
 def run_ollama(run_id):
-    for model, gpu in itertools.product(CFG["ollama"]["models"], CFG["ollama"]["gpu_used"]):
+    models = CFG["ollama"]["models"]
+    if not models:
+        # (d) Nessun modello: gestione esplicita e pulita
+        print("ℹ️  No Ollama models listed in YAML; skipping Ollama suite.")
+        return
+    any_ok = False
+    for model, gpu in itertools.product(models, CFG["ollama"]["gpu_used"]):
         cmd = [PY, CFG["ollama"]["script"],
                "--model", model,
                "--prompt", CFG["ollama"]["prompt"],
@@ -45,7 +57,10 @@ def run_ollama(run_id):
         if gpu:
             cmd += ["--gpu"]
         cmd += ["--json"]
-        run_cmd(cmd)
+        ok = run_cmd(cmd)
+        any_ok = any_ok or ok
+    if not any_ok:
+        print("⚠️  All Ollama commands failed (see messages above).")
 
 def handle_upload(args):
     """Cifra i CSV e li carica su Filebin (se non disabilitato)."""
@@ -117,7 +132,7 @@ def render_notebook():
     html_out = pathlib.Path(nb_file).with_suffix(".html")
 
     print("📚  Eseguo notebook e genero HTML…")
-    run_cmd([            # <-- qui usiamo la helper già esistente
+    ok = run_cmd([            # <-- qui usiamo la helper già esistente
         "jupyter", "nbconvert",
         "--to", "html",
         "--execute",
@@ -125,8 +140,11 @@ def render_notebook():
         nb_file
     ])
 
-    print(f"✅  HTML creato: {html_out}")
-    webbrowser.open_new_tab(html_out.resolve().as_uri())
+    if ok:
+        print(f"✅  HTML creato: {html_out}")
+        webbrowser.open_new_tab(html_out.resolve().as_uri())
+    else:
+        print("⚠️  Failed to generate HTML report; you can execute the notebook manually.")
 
 def main():
     pathlib.Path("results").mkdir(exist_ok=True)

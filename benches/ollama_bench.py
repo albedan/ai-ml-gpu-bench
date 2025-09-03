@@ -104,9 +104,27 @@ def main():
     print(f"• Benchmarking {args.model} – {mode} – seed {args.seed}")
     for i in range(1, args.repeats + 1):
         print(f"  Run {i}/{args.repeats} … ", end="", flush=True)
-        wall, tot_ns, eval_ns, tok, out_len = call_ollama(
-            args.model, prompt, args.gpu, args.seed
-        )
+        try:
+            wall, tot_ns, eval_ns, tok, out_len = call_ollama(
+                args.model, prompt, args.gpu, args.seed
+            )
+        except requests.exceptions.HTTPError as e:
+            status = getattr(e.response, "status_code", None)
+            body = ""
+            try: body = e.response.text
+            except Exception: pass
+            if status in (400, 404) and any(k in (body or "").lower() for k in ["model", "not found", "no such model"]):
+                print(f"⚠️  Model '{args.model}' not installed. Skipping this run.")
+            else:
+                print(f"⚠️  HTTP error from Ollama ({status}): {e}. Skipping this run.")
+            continue
+        except requests.exceptions.ConnectionError:
+            print("⚠️  Ollama not reachable at http://localhost:11434. Skipping this run.")
+            continue
+        except Exception as e:
+            print(f"⚠️  Ollama run failed (GPU={args.gpu}): {e}. Skipping this run.")
+            continue
+
         w_times.append(wall)
         e_times.append(ns2s(eval_ns))
         t_times.append(tok / ns2s(eval_ns) if eval_ns else 0)
@@ -117,6 +135,9 @@ def main():
     def min_med_max(arr):
         return min(arr), statistics.median(arr), max(arr)
 
+    if not w_times:
+        print("⚠️  No successful Ollama runs; not writing CSV for this configuration.")
+        return 0
     wall_min, wall_med, wall_max = min_med_max(w_times)
     tok_min,  tok_med,  tok_max  = min_med_max(t_times)
 
@@ -152,4 +173,6 @@ if __name__ == "__main__":
     try:
         main()
     except requests.exceptions.ConnectionError:
-        sys.exit("❌ Ollama apparently not running on http://localhost:11434")
+        print("⚠️  Ollama apparently not running on http://localhost:11434. Skipping.")
+    except Exception as e:
+        print(f"⚠️  Unexpected error: {e}.")
