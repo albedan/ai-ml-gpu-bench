@@ -1,0 +1,67 @@
+```mermaid
+---
+config:
+  flowchart:
+    htmlLabels: false
+  layout: fixed
+---
+flowchart TB
+ subgraph Local["**Local AI-ML Benchmark**<br>(_public repo_)"]
+        A["_YAML_ config"]
+        B["Runner script (run_suite.py)"]
+        C["Ollama LLMs benchamrk"]
+        D["XGBoost benchamrk"]
+        E["Ollama CSV results"]
+        F["XGBoost CSV results"]
+        G["Encrypt with RSA key"]
+        H["Upload to Filebin"]
+        K["Public RSA key"]
+  end
+ subgraph Integration["**Orchestration with Github Actions**<br>(_private repo_)"]
+        L["Scheduled Filebin Monitoring"]
+        M{"New files?"}
+        N["Notification"]
+        O["Download & Decrypt"]
+        P["Schema Validation"]
+        Q["Insert into _staging area_<br>(🔒 GitHub Secrets)"]
+        J["Private RSA key<br>(🔒 GitHub Secrets)"]
+  end
+ subgraph Database["**Results on Motherduck**"]
+        S[("Staging Tables")]
+        T[("Reference Tables")]
+  end
+ subgraph Dashboard["**Dashboard on Streamlit**<br>(_private repo_)"]
+        U["Predefined views"]
+        V["SQL playground"]
+  end
+    A --> B
+    B --> C & D
+    C --> E
+    D --> F
+    E --> G
+    F --> G
+    G --> H
+    H -- Write files --> I["Filebin"]
+    G -. Uses .-> K
+    L -. Monitor .-> I
+    L --> M
+    M -- Yes --> N
+    M -- No, write keepalive --> I
+    N --> O
+    N -. Notify via Bot<br>(🔒 GitHub Secrets) .-> R["Telegram Group"]
+    O --> P
+    P --> Q
+    O -. Uses .-> J
+    Q -- Insert --> S
+    S --> MRP["🧑‍💻 Manual Review & Promotion ✅"]
+    MRP --> T
+    U -- "Read-only" --> T
+    V -- "Read-only" --> S & T
+    I@{ shape: lin-cyl}
+    style I fill:#E1BEE7
+    style R fill:#FFCDD2
+    style Database fill:#FFE0B2
+    style Local stroke:#000000,fill:#C8E6C9
+    style Integration fill:#FFF9C4
+    style Dashboard fill:#BBDEFB
+```
