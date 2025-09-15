@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.13-blue)
 ![Altair](https://img.shields.io/badge/Altair-5.5-green)
 ![XGBoost](https://img.shields.io/badge/XGBoost-3.0-orange)
-![Ollama](https://img.shields.io/badge/Ollama-0.9-purple)
+![Ollama](https://img.shields.io/badge/Ollama-0.9|0.10|0.11-purple)
 
 ## Objective
 
@@ -18,9 +18,10 @@ The reproducible benchmarks cover:
 
 Everything is orchestrated by a single YAML file (`ai_bench_suite.yaml`) and a runner script (`run_suite.py`), so you can launch an entire set of tests with one command.
 
-Results are visible at the end of the benchmark in a **notebook** that is automatically produced, with comparison against a handful of *reference systems*.
+Results are visible:
 
-To better navigate a growing number of results, you can head to this **Streamlit dashboard** that is regularly updated: <https://ai-ml-gpu-bench.streamlit.app>
+- **immediately at the end of the benchmark**, in a *notebook* that is automatically produced, with comparison against a handful of *reference systems*;
+- **on a regularly updated Streamlit dashboard**, to better interact with a growing number of results: <https://ai-ml-gpu-bench.streamlit.app>
 
 ---
 
@@ -29,18 +30,19 @@ To better navigate a growing number of results, you can head to this **Streamlit
 1. A unique **`run_id`** is generated.  
 2. The benchmarks specified in the **configuration YAML file** are executed.  
 3. The results of each test are recorded in two separate CSVs for **XGBoost** and **Ollama** (if both are selected).  
-4. If you’d like to help grow the *reference* result base, the two CSVs are **encrypted** (RSA 4096) and uploaded to Filebin (link shown in the console), submitting only technical data.  
-5. The Altair notebook is executed and exported to HTML **without the code**; it opens automatically in the browser (the bars with a **thick border** are those from the just‑completed run).
+4. The Jupyter notebook is executed and exported to HTML; it opens automatically in the browser (the bars with a **thick border** are those from the just‑completed run).
+5. If you’d like to help grow the *reference* result base, the two CSVs are **encrypted** (RSA 4096 bit) and uploaded to Filebin, submitting only technical data (opt-out available).  
+6. On a daily basis, an ingestion process is run in order to import new results and make them available via Streamlit. More on the architecture underneath: <https://allaboutdata.substack.com/p/benchmarking-ai-and-ml-on-local-cpugpus>
 
 ---
 
 ## What to expect: two examples
 
-4 GPUs compared on 8 different LLMs via Ollama.  
+4 GPUs compared on a few different LLMs via Ollama (Streamlit dashboard):  
 
-![Altair Dashboard Ollama](images/visualization_ollama.png)
+![Altair Dashboard Ollama](images/visualization_ollama_streamlit.png)
 
-XGBoost tested on 4 machines, each with the GPU enabled or not.  
+XGBoost tested on 4 machines, each with the GPU enabled or not (Jupyter notebook):  
 
 ![Altair Dashboard XGBoost](images/visualization_xgboost.png)
 
@@ -123,6 +125,19 @@ The first run will download the needed dependencies.
 
 - **CSV**: result files `xgb.csv` and `ollama.csv` are written, one row per benchmark, with metrics and basic machine metadata.  
 - **Notebook** (`bench_results_analysis_altair.ipynb`): executed and opened automatically in the browser. It lets you explore the newly obtained results and compare them with reference benchmarks.
+
+---
+
+## ❓ Q&A
+
+| Q | A |
+|----|--------|
+| *Can I run just a subset of the benchmark?* | ✅ **Sure!** Just edit the file `ai_bench_suite.yaml`, for instance by commenting LLMs you don't want to try, or to run GPU or CPU only. |
+| *I don't have a GPU. Is it for me as well?* | ✅ **Yes**, you can run the benchmark as it is (it will automatically skip the GPU benchmarks). |
+| *Can I run the benchmark on an AMD GPU?* | 🟨 **Partially**, Ollama will leverage the GPU, while XGBoost will (likely) run on CPU only. |
+| *I have an Nvidia GPU, but XGBoost runs on CPU only* | ℹ️ **Please verify the installation of CUDA toolkit** by running `nvidia-smi` and `nvcc -V` in a terminal. The first verifies the existence of an Nvidia GPU, the second shows the running CUDA toolkit. |
+
+---
 
 ## 🔚 Thanks for testing!
 
