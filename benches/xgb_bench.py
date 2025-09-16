@@ -12,6 +12,7 @@ from bench_utils import emit, sysinfo
 import argparse, pathlib, time, urllib.request, os, statistics
 from typing import Tuple
 import datetime as dt
+import hashlib
 
 import numpy as np
 import pandas as pd
@@ -26,6 +27,7 @@ HIGGS_URL = (
 DATA_DIR = pathlib.Path("./data")
 CSV_GZ = DATA_DIR / "HIGGS.csv.gz"
 DEFAULT_SEED = 42
+EXPECTED_SHA256 = 'ea302c18164d4e3d916a1e2e83a9a8d07069fa6ebc7771e4c0540d54e593b698'
 
 # ────────── dataset helper ────────────────────────────────────────────────────
 def download_dataset() -> pathlib.Path:
@@ -40,7 +42,34 @@ def download_dataset() -> pathlib.Path:
 
 def load_higgs(rows: int | None, seed: int) -> Tuple[np.ndarray, ...]:
     """Legge il CSV in RAM con pandas; restituisce NumPy array + split stabile."""
+
+    # --- BLOCCO MINIMALE DI VERIFICA/REDOWNLOAD --------------------------------
+    def _calc_digest(p: pathlib.Path) -> str:
+        h = hashlib.sha256()
+        with open(p, "rb") as f:
+            for chunk in iter(lambda: f.read(4 * 1024 * 1024), b""):  # 4MB
+                h.update(chunk)
+        return h.hexdigest()
+
+    existed_before = CSV_GZ.exists()
     csv_path = download_dataset()
+
+    calc = _calc_digest(csv_path)
+    if calc.lower() != EXPECTED_SHA256:
+        if existed_before:
+            print("⚠️  Digest mismatch: elimino e riscarico…")
+            CSV_GZ.unlink(missing_ok=True)
+            download_dataset()
+            calc = _calc_digest(CSV_GZ)
+            if calc.lower() != EXPECTED_SHA256:
+                raise RuntimeError(
+                    f"SHA256 non corrisponde dopo il redownload: {calc}"
+                )
+        else:
+            raise RuntimeError(f"SHA256 non corrisponde: {calc}")
+    else:
+        print(f"✅ Digest ok ({calc})")
+
     print(f"📥 Loading {'all' if rows is None else f'{rows:_}'} rows…")
     df = pd.read_csv(
         csv_path,
