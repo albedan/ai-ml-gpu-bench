@@ -117,7 +117,7 @@ The first run will download the needed dependencies.
 |----|--------|
 | **Result sharing** | Encrypted with a public/private key scheme and uploaded to Filebin (technical data only) |
 | **Opt‑out results** | `--no-upload-results` skips encryption and upload entirely |
-| **Suite selection** | `--suite` lets you choose `xgboost`, `ollama` or `both` (default) |
+| **Suite selection** | add `--suite xgboost` to run only ML workload, or `--suite ollama` for AI only (default is `both`) |
 
 ---
 
