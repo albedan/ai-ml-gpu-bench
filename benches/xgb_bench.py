@@ -13,6 +13,7 @@ import argparse, pathlib, time, urllib.request, os, statistics
 from typing import Tuple
 import datetime as dt
 import hashlib
+from tqdm.auto import tqdm
 
 import numpy as np
 import pandas as pd
@@ -39,6 +40,37 @@ def download_dataset() -> pathlib.Path:
         print("✅ Dataset already present.")
     return PARQUET_FILE
 
+def download_dataset() -> pathlib.Path:
+    DATA_DIR.mkdir(exist_ok=True)
+
+    if not PARQUET_FILE.exists():
+        pbar = [None]
+
+        def reporthook(count, block_size, total_size):
+            if pbar[0] is None:
+                pbar[0] = tqdm(
+                    total=total_size,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1024,
+                    desc="Downloading"
+                )
+            downloaded = count * block_size
+            if downloaded <= total_size:
+                pbar[0].n = downloaded
+                pbar[0].refresh()
+            else:
+                pbar[0].n = total_size
+                pbar[0].refresh()
+
+        print(f"⬇️  Downloading HIGGS… ({HIGGS_URL})")
+        urllib.request.urlretrieve(HIGGS_URL, PARQUET_FILE, reporthook)
+        if pbar[0]:
+            pbar[0].close()
+    else:
+        print("✅ Dataset already present.")
+
+    return PARQUET_FILE
 
 def load_higgs(rows: int | None, seed: int) -> Tuple[np.ndarray, ...]:
     """Legge il CSV in RAM con pandas; restituisce NumPy array + split stabile."""
