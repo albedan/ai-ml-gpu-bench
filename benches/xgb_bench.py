@@ -22,22 +22,22 @@ import xgboost as xgb
 
 # ────────── configurazione ────────────────────────────────────────────────────
 HIGGS_URL = (
-    "https://archive.ics.uci.edu/ml/machine-learning-databases/00280/HIGGS.csv.gz"
+    "https://huggingface.co/datasets/albedan/higgs_parquet/resolve/main/HIGGS.parquet"
 )
 DATA_DIR = pathlib.Path("./data")
-CSV_GZ = DATA_DIR / "HIGGS.csv.gz"
+PARQUET_FILE = DATA_DIR / "HIGGS.parquet"
 DEFAULT_SEED = 42
-EXPECTED_SHA256 = 'ea302c18164d4e3d916a1e2e83a9a8d07069fa6ebc7771e4c0540d54e593b698'
+EXPECTED_SHA256_PARQUET = '8ca8941fcc1848930bf8a1890035bc2750c063975e75bd6803c249b235edced7'
 
 # ────────── dataset helper ────────────────────────────────────────────────────
 def download_dataset() -> pathlib.Path:
     DATA_DIR.mkdir(exist_ok=True)
-    if not CSV_GZ.exists():
+    if not PARQUET_FILE.exists():
         print(f"⬇️  Downloading HIGGS… ({HIGGS_URL})")
-        urllib.request.urlretrieve(HIGGS_URL, CSV_GZ)
+        urllib.request.urlretrieve(HIGGS_URL, PARQUET_FILE)
     else:
         print("✅ Dataset already present.")
-    return CSV_GZ
+    return PARQUET_FILE
 
 
 def load_higgs(rows: int | None, seed: int) -> Tuple[np.ndarray, ...]:
@@ -51,17 +51,17 @@ def load_higgs(rows: int | None, seed: int) -> Tuple[np.ndarray, ...]:
                 h.update(chunk)
         return h.hexdigest()
 
-    existed_before = CSV_GZ.exists()
+    existed_before = PARQUET_FILE.exists()
     csv_path = download_dataset()
 
     calc = _calc_digest(csv_path)
-    if calc.lower() != EXPECTED_SHA256:
+    if calc.lower() != EXPECTED_SHA256_PARQUET:
         if existed_before:
             print("⚠️  Digest mismatch: elimino e riscarico…")
-            CSV_GZ.unlink(missing_ok=True)
+            PARQUET_FILE.unlink(missing_ok=True)
             download_dataset()
-            calc = _calc_digest(CSV_GZ)
-            if calc.lower() != EXPECTED_SHA256:
+            calc = _calc_digest(PARQUET_FILE)
+            if calc.lower() != EXPECTED_SHA256_PARQUET:
                 raise RuntimeError(
                     f"SHA256 non corrisponde dopo il redownload: {calc}"
                 )
@@ -71,13 +71,7 @@ def load_higgs(rows: int | None, seed: int) -> Tuple[np.ndarray, ...]:
         print(f"✅ Digest ok ({calc})")
 
     print(f"📥 Loading {'all' if rows is None else f'{rows:_}'} rows…")
-    df = pd.read_csv(
-        csv_path,
-        compression="gzip",
-        header=None,
-        nrows=rows,
-        dtype=np.float32,
-    )
+    df = pd.read_parquet(csv_path)[:rows]
     X = df.iloc[:, 1:].to_numpy()
     y = df.iloc[:, 0].to_numpy(np.int8)
 

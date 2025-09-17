@@ -1,6 +1,7 @@
 # virtualenv
 .venv/
 .vscode/
+local/
 
 # Python
 __pycache__/
@@ -11,3 +12,4 @@ __pycache__/
 
 # Dati compressi
 *.csv.gz
+*.parquet
