@@ -136,6 +136,7 @@ The first run will download the needed dependencies.
 | *I don't have a GPU. Is it for me as well?* | ✅ **Yes**, you can run the benchmark as it is (it will automatically skip the GPU benchmarks). |
 | *Can I run the benchmark on an AMD GPU?* | 🟨 **Partially**, Ollama will leverage the GPU, while XGBoost will (likely) run on CPU only. |
 | *I have an Nvidia GPU, but XGBoost runs on CPU only* | ℹ️ **Please verify the installation of CUDA toolkit** by running `nvidia-smi` and `nvcc -V` in a terminal. The first verifies the existence of an Nvidia GPU, the second shows the running CUDA toolkit. |
+| *Can I run the bench on a old machine (10+ years)?* | ✅ **Yes you can!** I suggest to edit `ai_bench_suite.yaml` to include only smaller LLMs (`phi3:3.8b` and `qwen3:4b`). The benchmark was tested on a 15 years old Intel i5-560M and 8GB of RAM. |
 
 ---
 
