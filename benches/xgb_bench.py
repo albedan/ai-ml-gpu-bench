@@ -103,7 +103,7 @@ def load_higgs(rows: int | None, seed: int) -> Tuple[np.ndarray, ...]:
         print(f"✅ Digest ok ({calc})")
 
     print(f"📥 Loading {'all' if rows is None else f'{rows:_}'} rows…")
-    df = pd.read_parquet(csv_path)[:rows]
+    df = pd.read_parquet(csv_path, engine='fastparquet')[:rows]
     X = df.iloc[:, 1:].to_numpy()
     y = df.iloc[:, 0].to_numpy(np.int8)
 
