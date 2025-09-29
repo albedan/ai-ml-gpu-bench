@@ -73,11 +73,7 @@ In a local folder, just **clone this repository**:
 git clone https://github.com/albedan/ai-ml-gpu-bench
 ```
 
-Only if you don’t have a system Python 3.13.*, you can install it via **uv**:
-
-```bash
-uv python install 3.13 --default
-```
+Python 3.13.* will be automatically installed (unless already present) via **uv**.
 
 ---
 
@@ -87,12 +83,12 @@ All benchmark parameters are here:
 
 ```yaml
 machine_info:
-  machine: "PC_AL_2025"       # Choose your synthetic host name
-  cpu:    "AMD Ryzen 5 9600X" # Commercial CPU name
-  gpu:    "Nvidia RTX 5060 16GB" # GPU name
+  machine: "" # Choose your preferred computer name (default: hostname)
+  cpu: "" # Please specify your CPU
+  gpu: "" # Please specify your GPU
 ```
 
-- **Update** these three fields to match your machine.  
+- **Update** these three fields to match your machine, otherwise system defaults will be used.  
 - **Comment / uncomment** the entries in the ``ollama`` section to include or exclude LLMs you haven’t downloaded.  
 - For the LLMs you left uncommented, verify they’re available with ``ollama list``. You can install them with ``ollama pull [model_name]``.  
 - Every combination listed in `rows` × `gpu` (for XGBoost) and `models` × `gpu` (for Ollama) is tried automatically.
@@ -136,7 +132,9 @@ The first run will download the needed dependencies.
 | *I don't have a GPU. Is it for me as well?* | ✅ **Yes**, you can run the benchmark as it is (it will automatically skip the GPU benchmarks). |
 | *Can I run the benchmark on an AMD GPU?* | 🟨 **Partially**, Ollama will leverage the GPU, while XGBoost will (likely) run on CPU only. |
 | *I have an Nvidia GPU, but XGBoost runs on CPU only* | ℹ️ **Please verify the installation of CUDA toolkit** by running `nvidia-smi` and `nvcc -V` in a terminal. The first verifies the existence of an Nvidia GPU, the second shows the running CUDA toolkit. |
-| *Can I run the bench on a old machine (10+ years)?* | ✅ **Yes you can!** I suggest to edit `ai_bench_suite.yaml` to include only smaller LLMs (`phi3:3.8b` and `qwen3:4b`). The benchmark was tested on a 15 years old Intel i5-560M and 8GB of RAM. |
+| *Can I run the bench on an old machine (10+ years)?* | ✅ **Yes you can!** I suggest to edit `ai_bench_suite.yaml` to include only smaller LLMs (`phi3:3.8b` and `qwen3:4b`). The benchmark was tested on a 15 years old Intel i5-560M and 8GB of RAM. |
+| *I am experiencing issues when downloading the sample dataset* | ℹ️ **Please verify the system certificates**. If you do not have Python 3.13 as system interpreter (i.e., it was installed automatically via uv), `uv add pip-system-certs` can solve the problem. |
+| *I have problem XYZ* | ❗ **Please open an issue here on Github**. |
 
 ---
 

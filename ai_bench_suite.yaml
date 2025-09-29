@@ -1,9 +1,9 @@
 # ai_bench_suite.yaml
 
 machine_info:
-  machine: "PC_AL_2025"
-  cpu: "AMD Ryzen 5 9600X"
-  gpu: "Nvidia RTX 5060 Ti 16GB"
+  machine: "" # Choose your preferred computer name (default: hostname)
+  cpu: "" # Please specify your CPU
+  gpu: "" # Please specify your GPU
 
 seed: 42
 
