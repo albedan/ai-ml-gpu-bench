@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "altair>=5.5.0",
     "cryptography>=45.0.5",
-    "cupy-cuda12x>=13.5.1",
+    "cupy-cuda12x>=13.5.1; sys_platform != 'darwin'",
     "fastparquet>=2024.11.0",
     "gputil>=1.4.0",
     "jupyter>=1.1.1",
