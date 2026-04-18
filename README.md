@@ -38,13 +38,17 @@ Results are visible:
 
 ## What to expect: two examples
 
-4 GPUs compared on a few different LLMs via Ollama (Streamlit dashboard):  
+Multiple machines benchmarked on Deepseek-R1 14B via Ollama (Streamlit dashboard):  
 
 ![Altair Dashboard Ollama](images/visualization_ollama_streamlit.png)
 
-XGBoost tested on 4 machines, each with the GPU enabled or not (Jupyter notebook):  
+XGBoost tested on the full HIGGS dataset, both with GPU and CPU (Streamlit dashboard):  
 
-![Altair Dashboard XGBoost](images/visualization_xgboost.png)
+![Altair Dashboard XGBoost](images/visualization_xgboost_streamlit.png)
+
+**Official results** are regularly updated and published on the Streamlit dashboard: <https://ai-ml-gpu-bench.streamlit.app>
+
+For convenience, a quick Jupyter notebook is immediately shown at the end of the benchmark.
 
 ---
 
@@ -88,7 +92,7 @@ machine_info:
   gpu: "" # Please specify your GPU
 ```
 
-- **Update** these three fields to match your machine, otherwise system defaults will be used.  
+- **System defaults** will be used unless you manually these three fields to match your machine.  
 - **Comment / uncomment** the entries in the ``ollama`` section to include or exclude LLMs you haven’t downloaded.  
 - For the LLMs you left uncommented, verify they’re available with ``ollama list``. You can install them with ``ollama pull [model_name]``.  
 - Every combination listed in `rows` × `gpu` (for XGBoost) and `models` × `gpu` (for Ollama) is tried automatically.
@@ -105,7 +109,7 @@ Simply run:
 uv run run_suite.py
 ```
 
-The first run will download the needed dependencies.
+The first run will download the needed dependencies. **Ollama has to be already installed**, with the models you plan to test already pulled.
 
 ### Privacy & Options
 
