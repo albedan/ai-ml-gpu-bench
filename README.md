@@ -109,15 +109,19 @@ Simply run:
 uv run run_suite.py
 ```
 
-The first run will download the needed dependencies. **Ollama has to be already installed**, with the models you plan to test already pulled.
+The first run will download the needed dependencies. **Ollama has to be already installed**, you can automatically pull the models specified in the YAML file by adding ``--autopull``.
 
-### Privacy & Options
+Consider also the option ``--fast`` for testing a subset with only the fastest models.
+
+### Privacy & in-depth options
 
 | 📦 | Detail |
 |----|--------|
 | **Result sharing** | Encrypted with a public/private key scheme and uploaded to Filebin (technical data only) |
 | **Opt‑out results** | `--no-upload-results` skips encryption and upload entirely |
 | **Suite selection** | add `--suite xgboost` to run only ML workload, or `--suite ollama` for AI only (default is `both`) |
+| **Fast benchmark** | add `--fast` to select just the fastest (and smallest) AI models - expect less than 30 minutes in total on a GPU-enabled platform |
+| **Autopull Ollama models** | add `--autopull` to automatically pull the Ollama models in the benchmark that you don't have in your Ollama environment |
 
 ---
 

@@ -1,6 +1,6 @@
 [project]
 name = "ai-ml-gpu-bench"
-version = "0.6.0"
+version = "0.6.1"
 description = "A suite to benchmark CPU/GPU Python performance in training ML models and running local LLMs"
 readme = "README.md"
 requires-python = ">=3.13"

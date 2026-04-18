@@ -17,23 +17,25 @@ xgboost:
 ollama:
   script: benches/ollama_bench.py
   prompt: "Mi spieghi la differenza tra un cammello e un dromedario?"
-  models:
-    - qwen3.5:9b
-    - qwen3.5:27b
-#    - qwen3.5:35b
-    - qwen3.6:35b
+  models_fast:
     - phi3:3.8b
+    - gemma4:e2b
     - qwen3:4b
-#    - qwen3:8b
+    - ministral-3:8b
+  models_additional:
     - qwen3:14b
+    - qwen3.5:9b
+    - qwen3.6:35b
+    - deepseek-r1:8b
+    - deepseek-r1:14b
+    - gemma4:e4b
+    - gemma4:26b
+#    - qwen3.5:27b
+#    - qwen3.5:35b
+#    - qwen3:8b
 #    - gemma3:4b
 #    - gemma3:12b
 #    - gemma3n:e2b
-    - deepseek-r1:8b
-    - deepseek-r1:14b
-    - gemma4:e2b
-    - gemma4:e4b
-    - gemma4:26b
   gpu_used:    [true, false] # Leave true, false to test both cpu and gpu; false = just CPU; true = just GPU
   repeats: 3
   out_csv: results/ollama.csv

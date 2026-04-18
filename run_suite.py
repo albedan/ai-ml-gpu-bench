@@ -40,12 +40,57 @@ def run_xgboost(run_id):
     if not any_ok:
         print("⚠️  All XGBoost commands failed (see messages above).")
 
-def run_ollama(run_id):
-    models = CFG["ollama"]["models"]
+def get_ollama_models(cfg, fast: bool):
+    fast_models = cfg["ollama"].get("models_fast", [])
+    additional = cfg["ollama"].get("models_additional", [])
+
+    if fast:
+        return fast_models
+
+    return list(dict.fromkeys(fast_models + additional))  # dedup preservando ordine
+
+def ensure_ollama_models(models, autopull: bool):
+    import subprocess
+
+    try:
+        cp = subprocess.run(
+            ["ollama", "list"],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        if cp.returncode != 0:
+            print("⚠️  Unable to list Ollama models.")
+            return
+
+        installed = cp.stdout
+
+        missing = [m for m in models if m not in installed]
+
+        if not missing:
+            return
+
+        if not autopull:
+            print(f"⚠️  Missing models: {', '.join(missing)}")
+            print("👉 Run with --autopull to download them automatically.")
+            return
+
+        for m in missing:
+            print(f"⬇️  Pulling {m} ...")
+            subprocess.run(["ollama", "pull", m])
+
+    except Exception as e:
+        print(f"⚠️  Error while checking/pulling models: {e}")
+
+def run_ollama(run_id, fast=False, autopull=False):
+    models = get_ollama_models(CFG, fast)
+
     if not models:
         # (d) Nessun modello: gestione esplicita e pulita
         print("ℹ️  No Ollama models listed in YAML; skipping Ollama suite.")
         return
+    ensure_ollama_models(models, autopull)
+
     any_ok = False
     for model, gpu in itertools.product(models, CFG["ollama"]["gpu_used"]):
         cmd = [PY, CFG["ollama"]["script"],
@@ -173,7 +218,25 @@ def main():
     parser.add_argument("--no-upload-results", action="store_true",
                         help="Do not encrypt / do not send results")
 
+    parser.add_argument(
+        "--fast",
+        action="store_true",
+        help="Run only a subset of Ollama models (models_fast)"
+    )
+
+    parser.add_argument(
+        "--autopull",
+        action="store_true",
+        help="Automatically pull missing Ollama models"
+    )
+
     args = parser.parse_args()
+
+    if args.fast and args.suite == "xgboost":
+        print("ℹ️  --fast ignored (no Ollama suite selected)")
+
+    if args.autopull and args.suite == "xgboost":
+        print("ℹ️  --autopull ignored (no Ollama suite selected)")
 
     run_id = gen_run_id()
     print(f"🔑  RUN ID: {run_id}")
@@ -187,7 +250,7 @@ def main():
 
     if args.suite in ("ollama", "both"):
         print("Starting Ollama benchmarks...")
-        run_ollama(run_id)
+        run_ollama(run_id, fast=args.fast, autopull=args.autopull)
         print("Ollama benchmarks completed.\n")
 
     total = time.time() - start_time
