@@ -146,7 +146,7 @@ def main():
         ["Tokens/s",          f"{tok_min:,.1f}",  f"{tok_med:,.1f}",  f"{tok_max:,.1f}"],
     ]
     print("\n" + tabulate(rows,
-        headers=["Metric", "min", "average", "max"],
+        headers=["Metric", "min", "median", "max"],
         tablefmt="github"))
     
     result = {"run_id": run_id}
@@ -166,7 +166,6 @@ def main():
         "timestamp": dt.datetime.now().isoformat(timespec="seconds"),
         "reference": False,
     })
-    result.update(sysinfo())
     emit(result, args)
 
 if __name__ == "__main__":

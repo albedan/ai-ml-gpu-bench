@@ -33,15 +33,6 @@ EXPECTED_SHA256_PARQUET = '8ca8941fcc1848930bf8a1890035bc2750c063975e75bd6803c24
 # ────────── dataset helper ────────────────────────────────────────────────────
 def download_dataset() -> pathlib.Path:
     DATA_DIR.mkdir(exist_ok=True)
-    if not PARQUET_FILE.exists():
-        print(f"⬇️  Downloading HIGGS… ({HIGGS_URL})")
-        urllib.request.urlretrieve(HIGGS_URL, PARQUET_FILE)
-    else:
-        print("✅ Dataset already present.")
-    return PARQUET_FILE
-
-def download_dataset() -> pathlib.Path:
-    DATA_DIR.mkdir(exist_ok=True)
 
     if not PARQUET_FILE.exists():
         pbar = [None]
@@ -56,12 +47,8 @@ def download_dataset() -> pathlib.Path:
                     desc="Downloading"
                 )
             downloaded = count * block_size
-            if downloaded <= total_size:
-                pbar[0].n = downloaded
-                pbar[0].refresh()
-            else:
-                pbar[0].n = total_size
-                pbar[0].refresh()
+            pbar[0].n = min(downloaded, total_size)
+            pbar[0].refresh()
 
         print(f"⬇️  Downloading HIGGS… ({HIGGS_URL})")
         urllib.request.urlretrieve(HIGGS_URL, PARQUET_FILE, reporthook)
@@ -236,7 +223,7 @@ def main():
     print("=============================")
 
     result = {"run_id": run_id}
-    result.update(sysinfo())
+    result.update(sysinfo()) # common_sysinfo
     result.update({           # costruisci il dict con tutte le metriche
         "bench":"xgboost",
         "version":xgb.__version__,

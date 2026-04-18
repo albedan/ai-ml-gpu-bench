@@ -14,6 +14,7 @@ from benches import encrypt_upload
 
 CFG = yaml.safe_load(open("ai_bench_suite.yaml"))
 PY = sys.executable 
+HEADER_MARKER = "<!-- BENCH_RUN_HEADER -->"
 
 def run_cmd(cmd):
     print("→", " ".join(cmd))
@@ -109,6 +110,7 @@ def inject_header_cell(notebook_path: str, run_id: str,
     }[suite_chosen]
 
     md = (
+        f"{HEADER_MARKER}\n"
         f"## ✅ Benchmark completed\n\n"
         f"* **run_id**: `{run_id}`\n"
         f"* **Total duration**: {human}\n"
@@ -120,7 +122,7 @@ def inject_header_cell(notebook_path: str, run_id: str,
 
     header = nbformat.v4.new_markdown_cell(md)
 
-    if nb.cells and nb.cells[0].cell_type == "markdown" and "Benchmark completato" in nb.cells[0].source:
+    if nb.cells and nb.cells[0].cell_type == "markdown" and HEADER_MARKER in nb.cells[0].source:
         nb.cells[0] = header          # sovrascrivi eventuale cella di run precedente
     else:
         nb.cells.insert(0, header)    # inserisci in testa
