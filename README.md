@@ -83,7 +83,9 @@ Python 3.13.* will be automatically installed (unless already present) via **uv*
 
 ### Configuration: `ai_bench_suite.yaml`
 
-All benchmark parameters are here:
+All benchmark parameters are in **this YAML file**.
+
+- **System defaults** for your machine name and hardware details will be used, unless you manually override any of these three fields.  
 
 ```yaml
 machine_info:
@@ -92,10 +94,11 @@ machine_info:
   gpu: "" # Please specify your GPU
 ```
 
-- **System defaults** will be used unless you manually these three fields to match your machine.  
-- **Comment / uncomment** the entries in the ``ollama`` section to include or exclude LLMs you haven’t downloaded.  
-- For the LLMs you left uncommented, verify they’re available with ``ollama list``. You can install them with ``ollama pull [model_name]``.  
-- Every combination listed in `rows` × `gpu` (for XGBoost) and `models` × `gpu` (for Ollama) is tried automatically.
+- **Commenting** an LLM model entry in the ``ollama`` section will exclude it from the benchmark. If possible, leave them all as provided, to help collecting results on a standard set of LLMs.  
+- For the active LLMs (i.e., uncommented), you can:
+  - Have the benchmark automatically check and if necessary pull them for you, by using the flag ``--autopull``. Consider that it could take a few minutes depending on your connection.
+  - Verify manually if they’re available with ``ollama list`` and install them with ``ollama pull [model_name]``.  
+- Every combination listed in `rows` × `gpu` (for XGBoost) and `models` × `gpu` (for Ollama) is run automatically during the benchmark.
 
 ---
 
@@ -109,9 +112,9 @@ Simply run:
 uv run run_suite.py
 ```
 
-The first run will download the needed dependencies. **Ollama has to be already installed**, you can automatically pull the models specified in the YAML file by adding ``--autopull``.
+The first run will download the needed dependencies. **Ollama has to be already installed**, while you can automatically pull the models specified in the YAML file just by adding ``--autopull``.
 
-Consider also the option ``--fast`` for testing a subset with only the fastest models.
+Consider also the option ``--fast`` for benchmarking only on a subset made of the fastest models.
 
 ### Privacy & in-depth options
 
