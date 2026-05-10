@@ -5,6 +5,10 @@ Esegue tutti i test definiti in ai_bench_suite.yaml e fa append nei CSV designat
 
 import yaml, subprocess, sys, itertools, time, pathlib, argparse
 import webbrowser, pathlib
+import json
+import re
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import nbformat
@@ -23,6 +27,125 @@ def run_cmd(cmd):
         print(f"⚠️  command failed (exit {res.returncode}): {' '.join(cmd)}")
         return False
     return True
+
+def _extract_version(text: str | None) -> str | None:
+    """
+    Estrae una versione semantica semplice da stringhe tipo:
+    - '0.11.4'
+    - 'v0.11.4'
+    - 'ollama version is 0.11.4'
+    """
+    if not text:
+        return None
+
+    match = re.search(r"v?(\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.\-]+)?)", text)
+    return match.group(1) if match else None
+
+
+def _version_tuple(version: str) -> tuple[int, int, int]:
+    """
+    Converte '0.11.4' in (0, 11, 4).
+    Ignora eventuali suffissi tipo '-rc1'.
+    """
+    base = version.split("-", 1)[0].split("+", 1)[0]
+    parts = base.split(".")
+    nums = [int(p) for p in parts[:3]]
+
+    while len(nums) < 3:
+        nums.append(0)
+
+    return tuple(nums)
+
+
+def get_local_ollama_version() -> str | None:
+    """
+    Legge la versione locale di Ollama.
+    Prima prova l'API del server locale, poi ripiega su `ollama --version`.
+    """
+    try:
+        req = urllib.request.Request(
+            "http://localhost:11434/api/version",
+            headers={"User-Agent": "ai-ml-gpu-bench"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            version = _extract_version(data.get("version"))
+            if version:
+                return version
+    except Exception:
+        pass
+
+    try:
+        cp = subprocess.run(
+            ["ollama", "--version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if cp.returncode == 0:
+            return _extract_version(cp.stdout) or _extract_version(cp.stderr)
+    except Exception:
+        pass
+
+    return None
+
+
+def get_latest_ollama_version() -> str | None:
+    """
+    Legge l'ultima release stabile di Ollama da GitHub Releases.
+    L'endpoint /latest esclude normalmente le prerelease.
+    """
+    url = "https://api.github.com/repos/ollama/ollama/releases/latest"
+
+    try:
+        req = urllib.request.Request(
+            url,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "ai-ml-gpu-bench",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            return _extract_version(data.get("tag_name"))
+    except Exception:
+        return None
+
+
+def warn_if_ollama_outdated() -> None:
+    """
+    Mostra solo un warning se la versione locale di Ollama è più vecchia
+    dell'ultima release stabile disponibile. Non blocca mai la suite.
+    """
+    local = get_local_ollama_version()
+
+    if not local:
+        print("ℹ️  Could not detect local Ollama version; continuing.")
+        return
+
+    latest = get_latest_ollama_version()
+
+    if not latest:
+        print(f"ℹ️  Local Ollama version: {local}. Could not check latest version; continuing.")
+        return
+
+    try:
+        is_outdated = _version_tuple(local) < _version_tuple(latest)
+    except Exception:
+        print(f"ℹ️  Local Ollama version: {local}. Could not compare with latest version {latest}; continuing.")
+        return
+
+    if is_outdated:
+        print()
+        print("⚠️  Ollama update available.")
+        print(f"   Installed : {local}")
+        print(f"   Latest    : {latest}")
+        print("   Some newer models may require a more recent Ollama version.")
+        print("   Please consider updating Ollama from https://ollama.com/download")
+        print("   Continuing with the installed version...")
+        print()
+    else:
+        print(f"✅ Ollama version OK: {local}")
 
 def run_xgboost(run_id):
     any_ok = False
@@ -89,6 +212,9 @@ def run_ollama(run_id, fast=False, autopull=False):
         # (d) Nessun modello: gestione esplicita e pulita
         print("ℹ️  No Ollama models listed in YAML; skipping Ollama suite.")
         return
+    
+    warn_if_ollama_outdated()
+    
     ensure_ollama_models(models, autopull)
 
     any_ok = False

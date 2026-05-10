@@ -1,9 +1,11 @@
 # AI & ML GPU Bench Suite for Python 
 
-![Python](https://img.shields.io/badge/python-3.13-blue)
-![Altair](https://img.shields.io/badge/Altair-5.5-green)
-![XGBoost](https://img.shields.io/badge/XGBoost-3.0-orange)
-![Ollama](https://img.shields.io/badge/Ollama-0.9|0.10|0.11-purple)
+![Python](https://img.shields.io/badge/python-%E2%89%A53.13-blue)
+![uv](https://img.shields.io/badge/uv-0.8.x-purple)
+![CUDA](https://img.shields.io/badge/CUDA-%E2%89%A512.x-76B900)
+![XGBoost](https://img.shields.io/badge/XGBoost-3.x-orange)
+![Ollama](https://img.shields.io/badge/Ollama-LLM%20bench-6f42c1)
+![Report](https://img.shields.io/badge/report-HTML%20%2B%20Streamlit-brightgreen)
 
 ## Objective
 
@@ -25,6 +27,23 @@ Results are visible:
 
 ---
 
+## Quick start
+
+```bash
+git clone https://github.com/albedan/ai-ml-gpu-bench
+cd ai-ml-gpu-bench
+uv run run_suite.py
+```
+
+For Ollama benchmarks, make sure Ollama is installed and running at `http://localhost:11434`.
+To automatically pull missing Ollama models during the full benchmark:
+
+```bash
+uv run run_suite.py --autopull
+```
+
+---
+
 ### What happens during a run
 
 1. A unique **`run_id`** is generated.  
@@ -32,7 +51,7 @@ Results are visible:
 3. The results of each test are recorded in two separate CSVs for **XGBoost** and **Ollama** (if both are selected).  
 4. The Jupyter notebook is executed and exported to HTML; it opens automatically in the browser (the bars with a **thick border** are those from the just‑completed run).
 5. If you’d like to help grow the *reference* result base, the two CSVs are **encrypted** (RSA 4096 bit) and uploaded to Filebin, submitting only technical data (opt-out available).  
-6. On a daily basis, an ingestion process is run in order to import new results and make them available via Streamlit. More on the architecture underneath: <https://allaboutdata.substack.com/p/benchmarking-ai-and-ml-on-local-cpugpus>
+6. A daily ingestion process imports new results and publishes them to the Streamlit dashboard. More on the architecture underneath: <https://allaboutdata.substack.com/p/benchmarking-ai-and-ml-on-local-cpugpus>
 
 ---
 
@@ -112,19 +131,32 @@ Simply run:
 uv run run_suite.py
 ```
 
-The first run will download the needed dependencies. **Ollama has to be already installed**, while you can automatically pull the models specified in the YAML file just by adding ``--autopull``.
+The first run may take a bit longer because `uv` will create the environment and install Python/package dependencies automatically. **Ollama has to be already installed** for LLM benchmarks. You can automatically pull the models specified in the YAML file just by adding ``--autopull``.
+
+`--autopull` downloads missing Ollama models, but it does not install or update Ollama itself.
+
+At startup, the Ollama suite checks your installed Ollama version against the latest stable release and prints a warning if an update is recommended. The benchmark continues either way.
 
 Consider also the option ``--fast`` for benchmarking only on a subset made of the fastest models.
 
-### Privacy & in-depth options
+### Common commands
+
+| Goal | Command | Notes |
+|------|---------|-------|
+| Run the full benchmark suite | `uv run run_suite.py` | Default: XGBoost + Ollama |
+| Run only Ollama benchmarks | `uv run run_suite.py --suite ollama` | Requires Ollama running at `http://localhost:11434` |
+| Run only XGBoost benchmarks | `uv run run_suite.py --suite xgboost` | Useful if you do not want to run LLM tests |
+| Run a faster Ollama subset | `uv run run_suite.py --suite ollama --fast` | Uses only the smaller/faster models from the YAML |
+| Pull missing Ollama models automatically | `uv run run_suite.py --autopull` | Downloads models only; it does not install or update Ollama |
+| Skip encrypted result upload | `uv run run_suite.py --no-upload-results` | Keeps all result files local |
+
+### Privacy
 
 | 📦 | Detail |
 |----|--------|
-| **Result sharing** | Encrypted with a public/private key scheme and uploaded to Filebin (technical data only) |
-| **Opt‑out results** | `--no-upload-results` skips encryption and upload entirely |
-| **Suite selection** | add `--suite xgboost` to run only ML workload, or `--suite ollama` for AI only (default is `both`) |
-| **Fast benchmark** | add `--fast` to select just the fastest (and smallest) AI models - expect less than 30 minutes in total on a GPU-enabled platform |
-| **Autopull Ollama models** | add `--autopull` to automatically pull the Ollama models in the benchmark that you don't have in your Ollama environment |
+| **Result sharing** | If enabled, CSV results are encrypted with a public/private key scheme and uploaded to Filebin. |
+| **Uploaded data** | Only technical benchmark data is submitted. No prompts, model outputs, datasets, notebooks, or raw system files are uploaded. |
+| **Opt‑out** | Use `--no-upload-results` to skip encryption and upload entirely. |
 
 ---
 
@@ -145,7 +177,7 @@ Consider also the option ``--fast`` for benchmarking only on a subset made of th
 | *I have an Nvidia GPU, but XGBoost runs on CPU only* | ℹ️ **Please verify the installation of CUDA toolkit** by running `nvidia-smi` and `nvcc -V` in a terminal. The first verifies the existence of an Nvidia GPU, the second shows the running CUDA toolkit. |
 | *Can I run the bench on an old machine (10+ years)?* | ✅ **Yes you can!** I suggest to edit `ai_bench_suite.yaml` to include only smaller LLMs (`phi3:3.8b` and `qwen3:4b`). The benchmark was tested on a 15 years old Intel i5-560M and 8GB of RAM. |
 | *I am experiencing issues when downloading the sample dataset* | ℹ️ **Please verify the system certificates**. If you do not have Python 3.13 as system interpreter (i.e., it was installed automatically via uv), `uv add pip-system-certs` can solve the problem. |
-| *I have problem XYZ* | ❗ **Please open an issue here on Github**. |
+| *I have another problem* | ❗ **Please open an issue here on Github**. |
 
 ---
 
