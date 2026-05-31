@@ -12,7 +12,7 @@ resolution-markers = [
 
 [[package]]
 name = "ai-ml-gpu-bench"
-version = "0.6.3"
+version = "0.6.4"
 source = { virtual = "." }
 dependencies = [
     { name = "altair" },
@@ -35,7 +35,7 @@ dependencies = [
 requires-dist = [
     { name = "altair", specifier = ">=5.5.0" },
     { name = "cryptography", specifier = ">=45.0.5" },
-    { name = "cupy-cuda12x", marker = "sys_platform != 'darwin'", specifier = ">=13.5.1" },
+    { name = "cupy-cuda12x", marker = "sys_platform != 'darwin'", specifier = ">=14.1.0" },
     { name = "fastparquet", specifier = ">=2024.11.0" },
     { name = "gputil", specifier = ">=1.4.0" },
     { name = "jupyter", specifier = ">=1.1.1" },
