@@ -21,21 +21,16 @@ ollama:
     - phi3:3.8b
     - gemma4:e2b
     - qwen3:4b
-    - ministral-3:8b
-  models_additional:
-    - qwen3:14b
-    - qwen3.5:9b
-    - qwen3.6:35b
     - deepseek-r1:8b
+  models_additional:
+    - qwen3.6:27b
+    - qwen3.6:35b
     - deepseek-r1:14b
     - gemma4:e4b
     - gemma4:26b
-#    - qwen3.5:27b
-#    - qwen3.5:35b
-#    - qwen3:8b
-#    - gemma3:4b
-#    - gemma3:12b
-#    - gemma3n:e2b
+    - qwen3.8:27b
+    - nemotron-3.5-lightning:30b
+    - muse-glimmer:30b
   gpu_used:    [true, false] # Leave true, false to test both cpu and gpu; false = just CPU; true = just GPU
   repeats: 3
   out_csv: results/ollama.csv
