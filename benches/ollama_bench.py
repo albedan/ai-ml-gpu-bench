@@ -24,15 +24,22 @@ def load_prompt(path_or_text: str) -> str:
 
 def call_ollama(model: str, prompt: str, use_gpu: bool, seed: int):
     """Restituisce: wall_time, total_ns, eval_ns, eval_tokens"""
+    options = {
+        "seed": seed,
+        "temperature": 0.0,
+    }
+
+    # CPU benchmark must explicitly disable GPU offloading.
+    # For GPU runs, do not override num_gpu: let Ollama use the
+    # configuration defined by the model / Modelfile.
+    if not use_gpu:
+        options["num_gpu"] = 0
+
     payload = {
         "model": model,
         "prompt": prompt,
         "stream": False,
-        "options": {
-            "seed": seed,
-            "temperature": 0.0,
-            "num_gpu": -1 if use_gpu else 0,
-        },
+        "options": options,
     }
 
     start = time.perf_counter()
