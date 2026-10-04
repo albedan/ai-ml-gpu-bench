@@ -18,7 +18,7 @@ import yaml
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 CFG = yaml.safe_load((ROOT_DIR / "ai_bench_suite.yaml").read_text(encoding="utf-8"))
-RESULT_SCHEMA_VERSION = 2
+RESULT_SCHEMA_VERSION = 3
 
 
 def emit(result: Dict[str, Any], args):

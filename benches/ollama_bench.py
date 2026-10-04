@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from bench_utils import emit, sysinfo
 
-import argparse, time, statistics, sys
+import argparse, time, statistics, sys, re
 from pathlib import Path
 import requests
 import subprocess
@@ -23,7 +23,7 @@ def load_prompt(path_or_text: str) -> str:
     return p.read_text() if p.exists() else path_or_text
 
 def call_ollama(model: str, prompt: str, use_gpu: bool, seed: int):
-    """Restituisce: wall_time, total_ns, eval_ns, eval_tokens"""
+    """Restituisce: wall_time, total_ns, eval_ns, eval_tokens, prompt_eval_count, prompt_eval_duration, out_len"""
     options = {
         "seed": seed,
         "temperature": 0.0,
@@ -52,7 +52,9 @@ def call_ollama(model: str, prompt: str, use_gpu: bool, seed: int):
     eval_ns = data.get("eval_duration", 0)
     tokens  = data.get("eval_count", 0)
     txt     = data.get("response", "")
-    return wall, tot_ns, eval_ns, tokens, len(txt)
+    prompt_count    = data.get("prompt_eval_count", 0)
+    prompt_duration = data.get("prompt_eval_duration", 0)
+    return wall, tot_ns, eval_ns, tokens, prompt_count, prompt_duration, len(txt)
 
 def get_ollama_version(host: str = "http://localhost:11434") -> str:
     """
@@ -84,6 +86,80 @@ def get_ollama_version(host: str = "http://localhost:11434") -> str:
 def ns2s(ns: int) -> float:
     return ns / 1e9
 
+def show_model(model: str):
+    """Legge i metadati statici del modello via POST /api/show (best effort)."""
+    try:
+        r = requests.post(f"{HOST}/api/show", json={"name": model}, timeout=60)
+        r.raise_for_status()
+        return r.json()
+    except Exception as e:
+        print(f"⚠️  /api/show failed for {model}: {e}")
+        return None
+
+
+def ps_entry_for(model: str):
+    """Legge lo stato runtime del modello via GET /api/ps (best effort)."""
+    try:
+        r = requests.get(f"{HOST}/api/ps", timeout=30)
+        r.raise_for_status()
+        for entry in r.json().get("models", []):
+            if entry.get("name") == model:
+                return entry
+    except Exception as e:
+        print(f"⚠️  /api/ps failed: {e}")
+    return None
+
+
+def parse_draft_num_predict(parameters):
+    """Estrae draft_num_predict dalla stringa parameters di /api/show (best effort)."""
+    if not isinstance(parameters, str):
+        return None
+    m = re.search(r"^draft_num_predict\s+(\d+)\s*$", parameters, re.MULTILINE)
+    return int(m.group(1)) if m else None
+
+
+def collect_ollama_static(model: str) -> dict:
+    """Metadati statici da /api/show, una tantum per modello. Valori non osservabili: None."""
+    show = show_model(model)
+    if not isinstance(show, dict):
+        return {"parameter_count_b": None, "quantization_level": None, "draft_num_predict": None}
+    details = show.get("details") or {}
+    model_info = show.get("model_info") or {}
+    try:
+        parameter_count_b = float(model_info["general.parameter_count"]) / 1e9
+    except (KeyError, TypeError, ValueError):
+        parameter_count_b = None
+    return {
+        "parameter_count_b": parameter_count_b,
+        "quantization_level": details.get("quantization_level") or None,
+        "draft_num_predict": parse_draft_num_predict(show.get("parameters")),
+    }
+
+
+def collect_ollama_runtime(model: str) -> dict:
+    """Metadati runtime da /api/ps, da campionare subito dopo il primo generate riuscito.
+    Valori non osservabili: None."""
+    entry = ps_entry_for(model)
+    out = {
+        "model_digest": None,
+        "model_size_gb": None,
+        "context_length": None,
+        "model_vram_gb": None,
+        "vram_residency_pct": None,
+    }
+    if not isinstance(entry, dict):
+        return out
+    size = entry.get("size")
+    size_vram = entry.get("size_vram")
+    out["model_digest"] = entry.get("digest") or None
+    out["model_size_gb"] = round(size / 2 ** 30, 2) if isinstance(size, (int, float)) and size > 0 else None
+    out["context_length"] = entry.get("context_length")
+    out["model_vram_gb"] = round(size_vram / 2 ** 30, 2) if isinstance(size_vram, (int, float)) and size_vram > 0 else None
+    if isinstance(size, (int, float)) and size > 0 and isinstance(size_vram, (int, float)):
+        out["vram_residency_pct"] = round(100 * size_vram / size, 1)
+    return out
+
+
 # ────────────────────────────── CLI ───────────────────────────────────────────
 def main():
     ap = argparse.ArgumentParser()
@@ -107,12 +183,14 @@ def main():
     prompt = load_prompt(args.prompt)
     mode   = "GPU" if args.gpu else "CPU"
 
-    w_times, e_times, t_times, sizes = [], [], [], []
+    w_times, e_times, t_times, sizes, p_counts, p_durs, e_counts = [], [], [], [], [], [], []
     print(f"• Benchmarking {args.model} – {mode} – seed {args.seed}")
+    static_meta = collect_ollama_static(args.model)
+    runtime_meta = None
     for i in range(1, args.repeats + 1):
         print(f"  Run {i}/{args.repeats} … ", end="", flush=True)
         try:
-            wall, tot_ns, eval_ns, tok, out_len = call_ollama(
+            wall, tot_ns, eval_ns, tok, p_count, p_dur, out_len = call_ollama(
                 args.model, prompt, args.gpu, args.seed
             )
         except requests.exceptions.HTTPError as e:
@@ -136,6 +214,11 @@ def main():
         e_times.append(ns2s(eval_ns))
         t_times.append(tok / ns2s(eval_ns) if eval_ns else 0)
         sizes.append(out_len)
+        p_counts.append(p_count)
+        p_durs.append(p_dur)
+        e_counts.append(tok)
+        if runtime_meta is None:
+            runtime_meta = collect_ollama_runtime(args.model)
         print(f"{wall:,.2f}s  (tokens/s {t_times[-1]:.1f})")
 
     # riepilogo
@@ -147,6 +230,11 @@ def main():
         return 0
     wall_min, wall_med, wall_max = min_med_max(w_times)
     tok_min,  tok_med,  tok_max  = min_med_max(t_times)
+    prompt_tps = [c / ns2s(d) for c, d in zip(p_counts, p_durs) if d]
+    prompt_tokens = int(statistics.median(p_counts))
+    prompt_tok_min, prompt_tok_med, prompt_tok_max = (min_med_max(prompt_tps)
+        if prompt_tps else (None, None, None))
+    generated_tokens_med = statistics.median(e_counts)
 
     rows = [
         ["Wall latency [s]", f"{wall_min:,.2f}", f"{wall_med:,.2f}", f"{wall_max:,.2f}"],
@@ -172,6 +260,24 @@ def main():
         "seed": args.seed,
         "timestamp": dt.datetime.now().isoformat(timespec="seconds"),
         "reference": False,
+    })
+    rt = runtime_meta if isinstance(runtime_meta, dict) else {}
+    result.update({
+        "model_digest": rt.get("model_digest"),
+        "parameter_count_b": static_meta.get("parameter_count_b"),
+        "quantization_level": static_meta.get("quantization_level"),
+        "model_size_gb": rt.get("model_size_gb"),
+        "context_length": rt.get("context_length"),
+        "model_vram_gb": rt.get("model_vram_gb"),
+        "vram_residency_pct": rt.get("vram_residency_pct"),
+        "draft_num_predict": static_meta.get("draft_num_predict"),
+        "prompt_tokens": prompt_tokens,
+        "prompt_tok_min_s": f"{prompt_tok_min:.2f}" if prompt_tok_min is not None else None,
+        "prompt_tok_med_s": f"{prompt_tok_med:.2f}" if prompt_tok_med is not None else None,
+        "prompt_tok_max_s": f"{prompt_tok_max:.2f}" if prompt_tok_max is not None else None,
+        "generated_tokens_med": generated_tokens_med,
+        "flash_attention": None,
+        "kv_cache_type": None,
     })
     emit(result, args)
 
