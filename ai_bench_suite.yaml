@@ -22,13 +22,17 @@ ollama:
     - gemma4:e2b
     - qwen3:4b
     - deepseek-r1:8b
+    - bonsai-2:9b
+    - lfm2.5:8b
+    - nemotron-3.5-bolt:e4b
   models_additional:
-    - qwen3.6:27b
+    - lfm2.5:24b
+    - bonsai-2:27b
+    - qwen3.8:27b
     - qwen3.6:35b
     - deepseek-r1:14b
     - gemma4:e4b
     - gemma4:26b
-    - qwen3.8:27b
     - nemotron-3.5-lightning:30b
     - muse-glimmer:30b
   gpu_used:    [true, false] # Leave true, false to test both cpu and gpu; false = just CPU; true = just GPU
